@@ -76,5 +76,23 @@ Installed:
 Complete!
 ```
 
+## 初始化 & 启动
+原readme中写的systemd无法在docker容器中使用，故手动模拟它的行为
+
+```bash
+su opengauss
+export GAUSSHOME=/opt/opengauss
+cd /var/lib/opengauss
+source /opt/opengauss/init-opengaussdb.sh
+/opt/opengauss/bin/gs_ctl start -D /var/lib/opengauss/data
+```
+
+日志显示成功启动
+
+```log
+[2024-11-12 07:41:33.603][45621][][gs_ctl]:  done
+[2024-11-12 07:41:33.603][45621][][gs_ctl]: server started (/var/lib/opengauss/data)
+```
+
 ## ref
 https://gitee.com/opengauss/riscv/blob/master/README.md
