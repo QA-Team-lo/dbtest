@@ -40,6 +40,15 @@ git checkout v8.4.0
 cargo build --no-default-features --features "portable test-engine-kv-rocksdb test-engine-raft-raft-engine"
 ```
 
+### pd
+```bash
+cd ~
+git clone https://github.com/tikv/pd.git
+cd pd
+git checkout v8.4.0
+make
+```
+
 ## ref
 https://docs.pingcap.com/zh/
 https://github.com/KevinMX/PLCT-Works/blob/main/misc/month12/TiDB/TiDB.md
