@@ -24,7 +24,7 @@ cd ~
 git clone https://github.com/pingcap/tidb.git
 cd tidb
 git checkout v8.4.0
-cargo build --no-default-features --features "portable test-engine-kv-rocksdb test-engine-raft-raft-engine"
+make
 ```
 等待编译完成后，会在bin目录下生成二进制文件`tidb-server`，运行即可启动
 
