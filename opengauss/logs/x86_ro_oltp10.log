@@ -1,3 +1,4 @@
+[sharelter@opengauss]$ sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-tables-count=24 --threads=10 --time=60 --pgsql-host=127.0.0.1 --pgsql-port=5432 --pgsql-user=testuser --pgsql-password=openEuler12#$ --pgsql-db=testdb /usr/share/sysbench/tests/include/oltp_legacy/oltp.lua run
 sysbench 1.0.20 (using system LuaJIT 2.1.ROLLING)
 
 Running the test with following options:
