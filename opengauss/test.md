@@ -63,13 +63,13 @@ select * from phonebook;
 
 ### 远程测试
 
-下载 [JDBC_6.0.0](https://opengauss.org/zh/download/) 数据库驱动
+下载 [JDBC_6.0.0](https://opengauss.org/zh/download/) 数据库驱动并解压
 
 启动 Dbeaver,并选择菜单->数据库->驱动管理器，在弹出对话框中，选择新建
 
 ![新建数据库驱动](./image/1.png)
 
-填写新建驱动名称->选择 JDBC 驱动文件->选择 JDBC Driver 类
+填写新建驱动名称->选择 JDBC 驱动文件,添加解压出来的`opengauss-jdbc-6.0.0.jar`->选择 JDBC Driver 类
 
 ![添加数据库驱动](./image/3.png)
 
