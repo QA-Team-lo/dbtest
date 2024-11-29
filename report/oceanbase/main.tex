@@ -40,7 +40,7 @@ OceanBase 是一个分布式关系数据库系统，主要由蚂蚁集团开发�
 
 | 平台        | 发行版        | 测试结果              |
 |-------------|---------------|-----------------------|
-| RISC-V      | Ubuntu 22.04  | 不支持                |
+| RISC-V      |  Any         | 不支持                |
 
 # 环境说明
 
@@ -53,28 +53,25 @@ OceanBase 是一个分布式关系数据库系统，主要由蚂蚁集团开发�
 
 ## 软件环境
 
-本次测试涵盖的系统版本和 OceanBase 版本如下：
-- Ubuntu 22.04: 官方不支持 RISC-V 架构
-
 ## 环境搭建
 
 ### 安装系统
 
-#### Ubuntu 22.04
-
-从官方镜像下载并安装 Ubuntu 22.04。
-
 ### 编译 OceanBase
 
 #### 官方工具链
-官方提供的依赖均可成功安装：
+
+尝试安装官方提供的依赖列表，所有依赖均可正常安装。
 
 ```bash
 sudo apt install git wget rpm rpm2cpio cpio make build-essential binutils m4
 ```
 
 #### compile
-使用代码仓中的 `build.sh` 编译，会检测到系统架构并报错
+
+尝试使用主仓库中的 `build.sh` 进行编译，会检测到 RISC-V 架构并不在支持列表中。
+
+随即中止编译，并产生如下报错。
 
 ```log
 [dep_create.sh] [ERROR] 'Ubuntu 22.04.5 LTS (riscv64)' is not supported yet.
@@ -82,13 +79,10 @@ sudo apt install git wget rpm rpm2cpio cpio make build-essential binutils m4
 
 #### 社区尝试
 
-有开发者提交了 [PR#847](https://github.com/oceanbase/oceanbase/pull/847)，尝试直接使用 cmake 直接构建。
+存在开发者提交的  [Pull Request WIP: make OB a generic cmake project #847](https://github.com/oceanbase/oceanbase/pull/847) 试图使得 cmake 在 OceanBase 构建上可用。
 
-但使用他的分支 [loongarch64/oceanbase](https://github.com/loongarch64/oceanbase) 编译，也会得到报错。
+但采用该分支 [loongarch64/oceanbase](https://github.com/loongarch64/oceanbase) 的最新 commit 编译，同样无法得到目标为 RISC-V 的可执行产物。
 
-```log
-[ERROR] 'Ubuntu 22.04.5 LTS (riscv64)' is not supported yet.
-```
 
 # 总结
 
@@ -101,7 +95,7 @@ sudo apt install git wget rpm rpm2cpio cpio make build-essential binutils m4
 
 \appendix
 
-以下是本报告使用的手动测试用例,结果见 \href{https://github.com/QA-Team-lo/dbtest}{Github 仓库}。
+以下是本报告的附录。本报告的 \href{https://github.com/QA-Team-lo/dbtest}{Github 仓库}。
 
 \begin{itemize}
     \item ...
