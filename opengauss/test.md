@@ -134,6 +134,10 @@ openGauss=# GRANT ALL PRIVILEGES TO testuser;
 ALTER ROLE
 ```
 
+
+#### 运行测试
+
+
 初始化数据库
 ```
 sysbench --db-driver=pgsql --oltp-table-size=100000 --oltp-tables-count=24 --threads=1 --pgsql-host=127.0.0.1 --pgsql-port=5432 --pgsql-user=testuser --pgsql-password=openEuler12#$ --pgsql-db=testdb  /usr/share/sysbench/tests/include/oltp_legacy/parallel_prepare.lua run
@@ -192,7 +196,6 @@ Indexes:
 testdb=> \q
 ```
 
-#### 运行测试
 
 执行读/写测试
 ```
