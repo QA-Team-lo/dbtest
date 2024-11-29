@@ -82,7 +82,8 @@ sudo dd if=sg2042_firmware_linuxboot.img of=/dev/sdb bs=1M status=progress
 
 使用 openEuler 容器编译可参考 https://github.com/QA-Team-lo/dbtest/blob/main/opengauss/install.md
 
-以下使用 Pioneer Box 裸机编译
+以下使用 Pioneer Box 裸机编译:
+
 下载源码
 
 ```bash
