@@ -1,0 +1,119 @@
+%%在"北大课程论文模板"基础上修改而来
+%%原作者：Shawn Wang
+%%Overleaf地址：https://www.overleaf.com/latex/templates/bei-jing-da-xue-ke-cheng-lun-wen-mo-ban/yntmqcktrzfh
+
+%%页边距
+\RequirePackage[left=2.50cm, right=2.50cm, top=2.50cm, bottom=2.50cm]{geometry}
+
+%%一些必要的宏包
+\usepackage[UTF8]{ctex}
+\usepackage{fontspec}
+\setmainfont{Noto Serif CJK SC}
+\setsansfont{Noto Sans CJK SC}
+\setmonofont{Noto Sans Mono CJK SC}
+
+\RequirePackage[unicode=true,colorlinks,urlcolor=blue,linkcolor=blue,bookmarksnumbered=blue]{hyperref}
+\RequirePackage{latexsym,amssymb,amsmath,amsbsy,amsopn,amstext,amsthm,amsxtra,color,bm,calc,ifpdf}
+\RequirePackage{graphicx}
+\RequirePackage{enumerate}
+\usepackage{enumitem}
+\setlist[description]{style=nextline}
+
+\RequirePackage{fancyhdr}
+\setlength{\headheight}{14.91003pt}
+\addtolength{\topmargin}{-2.91003pt}
+
+\RequirePackage{listings}
+\RequirePackage{multirow}
+\RequirePackage{makeidx}
+
+\RequirePackage{xcolor}
+\definecolor{bg}{rgb}{0.95,0.95,0.95} 
+
+\RequirePackage{subfigure}
+\PassOptionsToPackage{hyphens}{url}
+\RequirePackage{hyperref}
+\RequirePackage{pythonhighlight}
+
+\RequirePackage{minted}
+\setminted{
+    breaklines=true,
+    fontsize=\footnotesize,
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=bg
+}
+
+\RequirePackage{tcolorbox}
+\RequirePackage{fontawesome}
+
+\usepackage{appendix}
+
+
+\usepackage{titlesec}
+\usepackage{attachfile2}
+\usepackage{embedfile}
+
+\usepackage{markdown}
+\markdownSetup{
+  pipeTables = true
+}
+
+% \setcounter{secnumdepth}{4}
+
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+%% 更改摘要二字的样式
+\renewcommand{\abstractname}{\textbf{\large {摘\quad 要}}} 
+
+%%参考文献设置
+\usepackage{cite}
+\usepackage{ulem}
+\newcommand{\reference}{
+\nocite{*}   %打开此选项会列出bib里面的所有参考文献
+\bibliographystyle{IEEEtran} %规定了参考文献的格式
+\normalem
+\bibliography{reference} %调出LaTeX生成参考文献列表
+}
+
+%%文本框设置
+\newcommand{\tbox}[1]{
+\begin{center}
+\begin{tcolorbox}[colback=gray!10,%gray background
+                  colframe=black,% black frame colour
+                  width=8cm,% Use 8cm total width,
+                  arc=1mm, auto outer arc,
+                  boxrule=0.5pt,
+                 ]
+{#1}
+\end{tcolorbox}
+\end{center}
+}
+
+%%页眉设置
+\pagestyle{fancy}
+\fancyhead[L]{\fangsong TiDB 在 RISC-V 平台上的可用性报告}
+\fancyhead[C]{}%%留空则不显示
+\fancyhead[R]{\fangsong 测试小队 \& 丁丑小队}
+
+
+%%封面页设置
+\title{ 
+    \Huge \textbf{{TiDB 在 RISC-V 平台上的可用性报告}}
+}
+
+\author{
+    \\
+    \Large
+    测试小队 \&
+    丁丑小队
+}
+
+\date{
+    2024/11/30
+}
+

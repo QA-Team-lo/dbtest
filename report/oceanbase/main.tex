@@ -1,0 +1,112 @@
+%!TeX program = xelatex
+\documentclass{article}
+\usepackage{papers}
+
+%%-------------------------------正文开始---------------------------%%
+\begin{document}
+
+%%-----------------------封面--------------------%%
+\maketitle
+
+%%------------------摘要-------------%%
+\begin{abstract}
+本次报告旨在验证 OceanBase 数据库在 RISC-V 平台上的可用性。通过官方文档和社区尝试，发现 OceanBase 当前仅支持 x86_64 架构，不支持 RISC-V 架构。尝试编译 OceanBase 代码时，系统会检测到 RISC-V 架构并报错。社区开发者提交了相关 PR，但仍未能成功编译。这表明 OceanBase 在 RISC-V 平台上的支持仍需进一步开发和优化。
+\end{abstract}
+
+\thispagestyle{empty} % 首页不显示页码
+
+%%--------------------------目录页------------------------%%
+\newpage
+\tableofcontents
+
+%%------------------------正文页从这里开始-------------------%
+\newpage
+
+\begin{markdown}
+
+# 简介
+
+## 软件说明
+OceanBase 是一个分布式关系数据库系统，主要由蚂蚁集团开发和维护。它旨在提供高可用性、高性能和高扩展性的数据库解决方案，广泛应用于金融、电商等领域。
+
+## 测试目的
+本次测试旨在验证 OceanBase 数据库在 RISC-V 平台上的可用性。通过官方文档和社区尝试，评估其在 RISC-V 平台上的编译和运行情况，并为未来的优化和支持提供参考。
+
+## 测试概述
+本次测试通过官方提供的编译工具链和社区开发者的尝试，评估了 OceanBase 在 RISC-V 平台上的编译情况。测试发现，官方文档明确指出当前仅支持 x86_64 架构，不支持 RISC-V 架构。尝试编译 OceanBase 代码时，系统会检测到 RISC-V 架构并报错。社区开发者提交了相关 PR，但仍未能成功编译。
+
+## 测试总结
+本次测试结果如下：
+
+| 平台        | 发行版        | 测试结果              |
+|-------------|---------------|-----------------------|
+| RISC-V      | Ubuntu 22.04  | 不支持                |
+
+# 环境说明
+
+## 硬件环境
+本次测试主要在 RISC-V 平台上进行，机器硬件配置为：
+
+- CPU: （待补）
+- RAM: （待补）
+- Storage: （待补）
+
+## 软件环境
+
+本次测试涵盖的系统版本和 OceanBase 版本如下：
+- Ubuntu 22.04: 官方不支持 RISC-V 架构
+
+## 环境搭建
+
+### 安装系统
+
+#### Ubuntu 22.04
+
+从官方镜像下载并安装 Ubuntu 22.04。
+
+### 编译 OceanBase
+
+#### 官方工具链
+官方提供的依赖均可成功安装：
+
+```bash
+sudo apt install git wget rpm rpm2cpio cpio make build-essential binutils m4
+```
+
+#### compile
+使用代码仓中的 `build.sh` 编译，会检测到系统架构并报错
+
+```log
+[dep_create.sh] [ERROR] 'Ubuntu 22.04.5 LTS (riscv64)' is not supported yet.
+```
+
+#### 社区尝试
+
+有开发者提交了 [PR#847](https://github.com/oceanbase/oceanbase/pull/847)，尝试直接使用 cmake 直接构建。
+
+但使用他的分支 [loongarch64/oceanbase](https://github.com/loongarch64/oceanbase) 编译，也会得到报错。
+
+```log
+[ERROR] 'Ubuntu 22.04.5 LTS (riscv64)' is not supported yet.
+```
+
+# 总结
+
+本次报告评估了 OceanBase 数据库在 RISC-V 平台上的可用性和性能。通过测试发现，OceanBase 当前仅支持 x86_64 架构，不支持 RISC-V 架构。尝试编译 OceanBase 代码时，系统会检测到 RISC-V 架构并报错。尽管社区开发者提交了相关 PR，但仍未能成功编译。这表明 OceanBase 在 RISC-V 平台上的支持仍需进一步开发和优化。
+
+\end{markdown}
+
+\newpage
+\section{附录}
+
+\appendix
+
+以下是本报告使用的手动测试用例,结果见 \href{https://github.com/QA-Team-lo/dbtest}{Github 仓库}。
+
+\begin{itemize}
+    \item ...
+\end{itemize}
+
+\reference
+
+\end{document}
