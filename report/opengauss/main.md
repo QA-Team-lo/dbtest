@@ -7,13 +7,13 @@ openGauss 是一个免费的开源关系型数据库管理系统，主要由华�
 本次测试旨在验证 openGauss 在 RISC-V 平台上的可用性，特别是在 Milk-V Pioneer Box 和 Sipeed LicheePi 4A 两个典型平台上的表现。本报告通过手动测试的方法，从目前的平台兼容性及用户的日常使用体验两个角度评估了 openGauss 当前在 RISC-V 平台上的可用性，并给出了定性和定量的结论，为其未来进一步的优化和支持提供参考。
 
 ## 测试概述
-本次测试在 RISC-V 设备 Milk-V Pioneer Box 和 Sipeed LicheePi 4A 的多个 Linux 发行版上对多个版本的 openGauss 进行了 sysbench 测试。对其目前在 RISC-V 上的可用性进行了较为全面的测试并得出了相应的结论。
 <!-- TODO: 测试概述 -->
 
 ## 测试总结
-<!-- TODO: 解释只在 oE 测的原因 -->
+目前 openGauss 在 riscv 上仅支持使用 openEuler 系统进行编译与安装,licheepi 4a 因为性能不足而无法启动 openGauss 服务,
+Pioneer Box 可以正常本地和远程连接与使用.
 
-sysbench 性能测试结果如下：
+使用 sysbench 在 Pioneer Box 上性能测试结果如下：
 
 SQL statistics
 
@@ -46,8 +46,6 @@ Threads fairness
 | X86_64 @ 10 Threads rw | 4174.7000  | 12.74         | 59.9913            | 0.00                  |
 
 
-
-
 # 环境说明
 
 ## 硬件环境
@@ -70,11 +68,11 @@ x86_64:
 - RAM: 8 GiB
 
 ## 软件环境
-<!-- TODO:系统版本 -->
-
 本次测试涵盖的系统版本和 openGauss 版本如下：
 
-https://gitee.com/opengauss/riscv 6.0.0
+[openEuler](https://www.openeuler.org/zh/download/?version=openEuler%2024.03%20LTS) 24.03 LTS
+
+[openGauss](https://gitee.com/opengauss/riscv) 6.0.0
 
 ## 测试环境搭建
 
@@ -82,9 +80,30 @@ https://gitee.com/opengauss/riscv 6.0.0
 
 #### Sipeed LicheePi 4A
 
-LicheePi 4A 各个系统在[支持矩阵](https://github.com/ruyisdk/support-matrix/tree/main/LicheePi4A)上详细记载了安装过程，可作为参考。
+从 [官网](https://www.openeuler.org/zh/download/?version=openEuler%2024.03%20LTS) 下载镜像：
 
-<!-- TODO: install openeuler on lp4a -->
+选择 `RISC-V - 嵌入式 - lpi4a`。
+
+使用 `fastboot` 刷写镜像到板载 eMMC
+
+由于 LPi4A 默认的 USB VID/PID 通常不在默认 udev 规则内，在 Linux 下烧写时可能需要在 `fastboot` 前添加 `sudo`。
+
+按住板上的 **BOOT** 按键不放，然后插入 USB-C 线缆上电（线缆另一头接 PC），即可进入 USB 烧录模式。
+
+在 Windows 下使用设备管理器查看，会出现 `USB download gadget` 设备。
+
+在 Linux 下，使用 `lsusb` 查看设备，会显示以下设备：`ID 2345:7654 T-HEAD USB download gadget`。
+
+使用如下指令刷写镜像。
+
+```shell
+fastboot flash ram u-boot-with-spl-lpi4a-16g.bin
+fastboot reboot
+# 稍等几秒，等待开发板重启后重新连接至电脑
+fastboot flash uboot u-boot-with-spl-lpi4a-16g.bin
+fastboot flash boot openEuler-24.03-LTS-riscv64-lpi4a-base-boot.ext4
+fastboot flash root openEuler-24.03-LTS-riscv64-lpi4a-base-root.ext4
+```
 
 #### Milk-V Pioneer Box
 
@@ -369,7 +388,10 @@ sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-t
 
 
 ## 功能测试
-<!-- TODO: 一段测试成功的话 -->
+licheepi 4a 由于性能较弱,在启动 openGauss 服务时超时,而 Pioneer Box 可以正常进行本地和远程连接
+
+
+使用 dbeaver 远程连接 openGauss 数据库结果如图所示:
 
 ![展示](./image/6.png)
 
