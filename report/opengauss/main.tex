@@ -1,0 +1,207 @@
+%!TeX program = xelatex
+\documentclass{article}
+\usepackage{papers}
+
+%%-------------------------------正文开始---------------------------%%
+\begin{document}
+
+%%-----------------------封面--------------------%%
+\maketitle
+
+%%------------------摘要-------------%%
+\begin{abstract}
+本次测试报告旨在验证 openGauss 数据库在 RISC-V 平台上的可用性，并进行了 openGauss 在 Milk-V Pioneer Box 和 Sipeed LicheePi 4A 两个 RISC-V 典型平台上的测试。测试涵盖了多个 Linux 发行版和 openGauss 版本，通过手动测试和性能测试评估其在 RISC-V 平台上的可用性。手动测试通过模拟用户日常使用场景对可用性进行验证，测试显示 openGauss 在 RevyOS Linux 发行版上具备基本的数据库操作能力，而在 openEuler 上存在稳定性问题。性能评估结果显示，RISC-V 平台上的 openGauss 在 sysbench 基准测试中表现不佳，尤其在需要高性能的数据库操作任务上。受限于硬件和软件情况，其他系统无法完整运行或缺少支持。这表明 openGauss 已初步支持 RISC-V 平台，但在功能完整性和性能优化上仍需改进。
+\end{abstract}
+
+\thispagestyle{empty} % 首页不显示页码
+
+%%--------------------------目录页------------------------%%
+\newpage
+\tableofcontents
+
+%%------------------------正文页从这里开始-------------------%
+\newpage
+
+\begin{markdown}
+
+# 简介
+
+## 软件说明
+openGauss 是一个免费的开源关系型数据库管理系统，主要由华为开发和维护。它是一个广泛使用的代码库，为企业级应用提供了高性能、高可用性和高安全性的数据库解决方案。
+
+## 测试目的
+本次测试旨在验证 openGauss 在 RISC-V 平台上的可用性，特别是在 Milk-V Pioneer Box 和 Sipeed LicheePi 4A 两个典型平台上的表现。本报告通过手动测试的方法，从目前的平台兼容性及用户的日常使用体验两个角度评估了 openGauss 当前在 RISC-V 平台上的可用性，并给出了定性和定量的结论，为其未来进一步的优化和支持提供参考。
+
+## 测试概述
+本次测试在 RISC-V 设备 Milk-V Pioneer Box 和 Sipeed LicheePi 4A 的多个 Linux 发行版上对多个版本的 openGauss 进行了 sysbench 测试。对其目前在 RISC-V 上的可用性进行了较为全面的测试并得出了相应的结论。
+
+本报告在部分 Linux 发行版下还使用了 sysbench 以测试数据库的性能。
+
+## 测试总结
+本次测试在以下平台和系统上验证情况如下：
+
+| 平台        | 发行版        | 测试结果              |
+|-------------|---------------|-----------------------|
+| Pioneer Box | RevyOS        |                       |
+| LicheePi 4A | RevyOS        |                       |
+| Pioneer Box | openEuler     |                       |
+| LicheePi 4A | openEuler     |                       |
+| LicheePi 4A | Fedora        |                       |
+| Pioneer Box | Fedora        |                       |
+| Both        | openKylin     |                       |
+| Both        | openCloudOS   |                       |
+| Both        | Ubuntu        |                       |
+| Both        | Debian        |                       |
+
+性能测试结果如下：
+
+- sysbench：
+
+| Pioneer Box | LicheePi 4A | x86-64 参考 |
+|-------------|-------------|-------------|
+|    TBD      |    TBD      |     TBD     |
+
+其余未测试系统及原因如下：
+
+# 环境说明
+
+## 硬件环境
+本次测试主要在 Milk-V Pioneer Box 和 Sipeed LicheePi 4A 上进行，机器硬件配置为：
+
+Milk-V Pioneer Box:
+- CPU: SG2042 64 Core C920@2.0GHz
+- RAM: 4 channel 3200Hz 128GB DDR4 SODIMM (32GB * 4)
+- SSD: PCIe 3.0 x 4 1TB
+- GPU: AMD R5 230
+
+Sipeed LicheePi 4A:
+- CPU: TH1520, RISC-V 2.0G C910 x4
+- RAM: 16 GB 64bit LPDDR4X-3733
+- Storage: 128 GB eMMC
+
+## 软件环境
+
+本次测试涵盖的系统版本和 openGauss 版本如下：
+
+https://gitee.com/opengauss/riscv 6.0.0
+
+## 环境搭建
+
+### 安装系统
+
+#### Sipeed LicheePi 4A
+
+LicheePi 4A 各个系统在[支持矩阵](https://github.com/ruyisdk/support-matrix/tree/main/LicheePi4A)上详细记载了安装过程，可作为参考。
+
+- RevyOS
+从 [ISCAS 镜像](https://mirror.iscas.ac.cn/revyos/extra/images/lpi4a/)下载并解压：
+```shell!
+wget https://mirror.iscas.ac.cn/revyos/extra/images/lpi4a/20240720/boot-lpi4a-20240720_171951.ext4.zst
+wget https://mirror.iscas.ac.cn/revyos/extra/images/lpi4a/20240720/u-boot-with-spl-lpi4a.bin
+wget https://mirror.iscas.ac.cn/revyos/extra/images/lpi4a/20240720/root-lpi4a-20240720_171951.ext4.zst
+zstd -d boot-lpi4a-20240720_171951.ext4.zst
+zstd -d root-lpi4a-20240720_171951.ext4.zst
+```
+
+按住 boot 键后，上电/Reset 进入刷写模式。
+
+刷写系统：
+```shell!
+sudo fastboot devices
+sudo fastboot flash ram u-boot-with-spl-lpi4a.bin 
+sudo fastboot reboot
+sudo fastboot flash uboot u-boot-with-spl-lpi4a.bin
+sudo fastboot flash boot boot-lpi4a-20240720_171951.ext4
+sudo fastboot flash root root-lpi4a-20240720_171951.ext4
+```
+默认账号密码为：`debian`:`debian`
+
+#### Milk-V Pioneer Box
+
+##### RevyOS
+下载 [RevyOS 20241025](https://mirror.iscas.ac.cn/revyos/extra/images/sg2042/20241025/revyos-pioneer-20241025-001347.img.zst)后，使用 `zstd` 解压， `dd` 到 **NVMe 硬盘**中 *（需要一个硬盘盒）*
+准备 microSD 读卡器和存储卡，下载 [固件](https://mirror.iscas.ac.cn/revyos/extra/images/sg2042/20241025/firmware_single_sg2042-v6.6-lts-v0p7.img) 并 `dd` 到存储卡中。
+```shell!
+zstd -d revyos-pioneer-20241025-001347.img.zst
+sudo dd if=path/to/revyos-pioneer-20241025-001347.img of=/dev/your/nvme bs=4M status=progress
+sudo dd if=path/to/firmware_single_sg2042-v6.6-lts-v0p7.img of=/dev/your/sdcard bs=4M status=progress
+```
+将存储卡和硬盘插入系统后上电开机。
+
+##### openEuler
+下载[系统镜像](https://mirrors.hust.edu.cn/openeuler/openEuler-24.03-LTS/embedded_img/riscv64/SG2042/openEuler-24.03-LTS-riscv64-sg2042.img.zip)，解压，使用 `dd` 烧录至 NVMe 硬盘。
+下载[固件](https://mirrors.hust.edu.cn/openeuler/openEuler-24.03-LTS/embedded_img/riscv64/SG2042/sg2042_firmware_linuxboot.img.zip)，解压，使用 `dd` 烧录至 microSD 卡。
+
+请将下面的 `/dev/sda` `/dev/sdb` 替换成实际使用的硬盘和存储卡位置。
+
+```shell!
+unzip openEuler-24.03-LTS-riscv64-sg2042.img.zip
+sudo wipefs -af /dev/sda
+sudo dd if=openEuler-24.03-LTS-riscv64-sg2042.img of=/dev/sda bs=1M status=progress
+sudo eject /dev/sda
+unzip sg2042_firmware_linuxboot.img.zip
+sudo dd if=sg2042_firmware_linuxboot.img of=/dev/sdb bs=1M status=progress
+```
+将存储卡和硬盘插入系统上电开机。
+
+### 手动测试环境
+
+#### RevyOS
+
+...
+
+#### openEuler
+
+...
+
+### 性能测试
+
+...
+
+# 测试内容
+
+## 手动测试
+
+...
+
+## 性能测试
+
+...
+
+# 测试结果
+
+详细测试数据可见 [Github 仓库](https://github.com/QA-Team-lo/chromium_test)
+
+## 手动测试
+
+...
+
+
+## 性能测试
+
+...
+
+# 总结
+
+本次报告评估了 openGauss 数据库在 RISC-V 平台，特别是 Milk-V Pioneer Box 和 Sipeed LicheePi 4A 上的可用性和性能。
+
+...
+
+这些结果表明，尽管 openGauss 在 RISC-V 平台上已具备一定可用性，但仍需进一步优化和支持，以提高其功能完整性和性能表现。
+
+\end{markdown}
+
+\newpage
+\section{附录}
+
+\appendix
+
+以下是本报告使用的测试用例,结果见 \href{https://github.com/QA-Team-lo/dbtest}{Github 仓库}。
+
+\begin{itemize}
+    \item （待补）
+\end{itemize}
+
+\reference
+
+\end{document}
