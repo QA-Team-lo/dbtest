@@ -10,7 +10,7 @@
 
 %%------------------摘要-------------%%
 \begin{abstract}
-本次报告旨在验证 OceanBase 数据库在 RISC-V 平台上的可用性。通过官方文档和社区尝试，发现 OceanBase 当前仅支持 x86_64 架构，不支持 RISC-V 架构。尝试编译 OceanBase 代码时，系统会检测到 RISC-V 架构并报错。社区开发者提交了相关 PR，但仍未能成功编译。这表明 OceanBase 在 RISC-V 平台上的支持仍需进一步开发和优化。
+本次报告旨在验证 OceanBase 数据库在 RISC-V 平台上的可用性。通过官方文档和社区尝试，发现 OceanBase 当前不支持 RISC-V 架构。尝试编译 OceanBase 代码时，系统会检测到 RISC-V 架构并报错。社区开发者提交了相关 PR，但仍未能成功编译。这表明 OceanBase 在 RISC-V 平台上的支持仍需进一步开发和优化。
 \end{abstract}
 
 \thispagestyle{empty} % 首页不显示页码
@@ -33,7 +33,7 @@ OceanBase 是一个分布式关系数据库系统，主要由蚂蚁集团开发�
 本次测试旨在验证 OceanBase 数据库在 RISC-V 平台上的可用性。通过官方文档和社区尝试，评估其在 RISC-V 平台上的编译和运行情况，并为未来的优化和支持提供参考。
 
 ## 测试概述
-本次测试通过官方提供的编译工具链和社区开发者的尝试，评估了 OceanBase 在 RISC-V 平台上的编译情况。测试发现，官方文档明确指出当前仅支持 x86_64 架构，不支持 RISC-V 架构。尝试编译 OceanBase 代码时，系统会检测到 RISC-V 架构并报错。社区开发者提交了相关 PR，但仍未能成功编译。
+本次测试通过官方提供的编译工具链和社区开发者的尝试，评估了 OceanBase 在 RISC-V 平台上的编译情况。测试发现，官方文档明确指出当前不支持 RISC-V 架构。尝试编译 OceanBase 代码时，系统会检测到 RISC-V 架构并报错。社区开发者提交了相关 PR，但仍未能成功编译。
 
 ## 测试总结
 本次测试结果如下：
@@ -86,7 +86,7 @@ sudo apt install git wget rpm rpm2cpio cpio make build-essential binutils m4
 
 # 总结
 
-本次报告评估了 OceanBase 数据库在 RISC-V 平台上的可用性和性能。通过测试发现，OceanBase 当前仅支持 x86_64 架构，不支持 RISC-V 架构。尝试编译 OceanBase 代码时，系统会检测到 RISC-V 架构并报错。尽管社区开发者提交了相关 PR，但仍未能成功编译。这表明 OceanBase 在 RISC-V 平台上的支持仍需进一步开发和优化。
+本次报告评估了 OceanBase 数据库在 RISC-V 平台上的可用性和性能。通过测试发现，OceanBase 当前不支持 RISC-V 架构。尝试编译 OceanBase 代码时，系统会检测到 RISC-V 架构并报错。尽管社区开发者提交了相关 PR，但仍未能成功编译。这表明 OceanBase 在 RISC-V 平台上的支持仍需进一步开发和优化。
 
 \end{markdown}
 
@@ -97,9 +97,7 @@ sudo apt install git wget rpm rpm2cpio cpio make build-essential binutils m4
 
 以下是本报告的附录。本报告的 \href{https://github.com/QA-Team-lo/dbtest}{Github 仓库}。
 
-\begin{itemize}
-    \item ...
-\end{itemize}
+% TODO: 也许需要添加的更多附录信息
 
 \reference
 
