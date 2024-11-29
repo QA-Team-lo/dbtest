@@ -8,20 +8,15 @@ openGauss 是一个免费的开源关系型数据库管理系统，主要由华�
 
 ## 测试概述
 本次测试在 RISC-V 设备 Milk-V Pioneer Box 和 Sipeed LicheePi 4A 的多个 Linux 发行版上对多个版本的 openGauss 进行了 sysbench 测试。对其目前在 RISC-V 上的可用性进行了较为全面的测试并得出了相应的结论。
-
-本报告在部分 Linux 发行版下还使用了 sysbench 以测试数据库的性能。
+<!-- TODO: 测试概述 -->
 
 ## 测试总结
+<!-- TODO: 解释只在 oE 测的原因 -->
 
 性能测试结果如下：
 
 - sysbench：
 
-| Pioneer Box | LicheePi 4A | x86-64 参考 |
-|-------------|-------------|-------------|
-|    TBD      |    TBD      |     TBD     |
-
-其余未测试系统及原因如下：
 
 # 环境说明
 
@@ -40,6 +35,7 @@ Sipeed LicheePi 4A:
 - Storage: 128 GB eMMC
 
 ## 软件环境
+<!-- TODO:系统版本 -->
 
 本次测试涵盖的系统版本和 openGauss 版本如下：
 
