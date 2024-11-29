@@ -118,7 +118,7 @@ sudo dd if=sg2042_firmware_linuxboot.img of=/dev/sdb bs=1M status=progress
 下载源码
 
 ```bash
-su 
+su
 mkdir /root/rpmbuild
 cd /root/rpmbuild
 git clone https://gitee.com/opengauss/riscv SOURCES
@@ -184,7 +184,7 @@ vim /var/lib/opengauss/data/postgresql.conf
 # 配置 password_encryption_type = 1
 
 vim /var/lib/opengauss/data/pg_hba.conf
-# 末尾增加: 
+# 末尾增加:
 # host     all          testuser           0.0.0.0/0               md5
 
 gs_ctl -D $HOME/data reload
@@ -228,7 +228,7 @@ Type "help" for help.
 
 openGauss=# GRANT ALL ON SCHEMA public TO testuser;
 GRANT
-openGauss=# GRANT ALL PRIVILEGES TO testuser; 
+openGauss=# GRANT ALL PRIVILEGES TO testuser;
 ALTER ROLE
 ```
 
@@ -297,14 +297,14 @@ sysbench --db-driver=pgsql --oltp-table-size=100000 --oltp-tables-count=24 --thr
 使用下列命令验证生成的数据
 ```log
 [opengauss@openeuler-riscv64 openeuler]$ gsql -U testuser -d testdb
-Password for user testuser: 
+Password for user testuser:
 gsql ((openGauss-lite 6.0.0 build ) compiled at 2024-11-22 20:54:23 commit 0 last mr  release)
 Non-SSL connection (SSL connection is recommended when requiring high-security)
 Type "help" for help.
 
 testdb=> \dt
                             List of relations
- Schema |   Name   | Type  |  Owner   |             Storage              
+ Schema |   Name   | Type  |  Owner   |             Storage
 --------+----------+-------+----------+----------------------------------
  public | sbtest1  | table | testuser | {orientation=row,compression=no}
  public | sbtest10 | table | testuser | {orientation=row,compression=no}
@@ -334,7 +334,7 @@ testdb=> \dt
 
 testdb=> \d sbtest1
                              Table "public.sbtest1"
- Column |      Type      |                      Modifiers                       
+ Column |      Type      |                      Modifiers
 --------+----------------+------------------------------------------------------
  id     | integer        | not null default nextval('sbtest1_id_seq'::regclass)
  k      | integer        | not null default 0
@@ -375,7 +375,7 @@ sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-t
 
 ## 性能测试
 
-详细结果参见 [logs](https://github.com/QA-Team-lo/dbtest/tree/main/opengauss/logs) 目录或附录。
+详细结果参见 [logs](./logs) 目录或附录。
 
 性能对比
 

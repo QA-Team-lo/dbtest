@@ -306,3 +306,5 @@ TSWLatexianTemp*
 #*Notes.bib
 /report/_markdown_main/
 /report/*.in
+/report/opengauss/_markdown_main/
+/report/opengauss/main.luabridge.lua
