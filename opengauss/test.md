@@ -110,9 +110,9 @@ gs_ctl -D $HOME/data reload
 # reload 后即可生效
 ```
 
-在 PostgreSQL 中创建数据库和用户(在修改密码规则后必须新建用户或修改密码才能使用)
+在 openGauss 中创建数据库和用户(在修改密码规则后必须新建用户或修改密码才能使用)
 ```
-su - postgres
+su - opengauss
 
 gsql -d postgres
 
