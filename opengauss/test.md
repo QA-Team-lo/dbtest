@@ -66,21 +66,27 @@ select * from phonebook;
 下载 [JDBC_6.0.0](https://opengauss.org/zh/download/) 数据库驱动
 
 启动 Dbeaver,并选择菜单->数据库->驱动管理器，在弹出对话框中，选择新建
+
 ![新建数据库驱动](./image/1.png)
 
 填写新建驱动名称->选择 JDBC 驱动文件->选择 JDBC Driver 类
+
 ![添加数据库驱动](./image/3.png)
 
 填写 URL 模板，值为:`jdbc:opengauss://{host}:{port}/{database}`,勾选嵌入，其他复选框不选择，然后确认，添加驱动即完成
+
 ![编辑数据库驱动](./image/2.png)
 
 选择菜单->数据库->新建连接，在弹出的框中搜索上一步中新建的 JDBC 驱动名,选择后点击下一步,如下图示
+
 ![新建连接](./image/4.png)
 
 在弹出框中填写 openGauss 主机地址、端口、将要连接的数据库以及认证用户名和密码，点击测试链接验证是否可正确连接
+
 ![测试连接](./image/5.png)
 
 测试结果
+
 ![展示](./image/6.png)
 
 ## 性能测试
@@ -97,13 +103,14 @@ sudo dnf install sysbench
 修改 opengauss 配置文件
 ```
 vim /var/lib/opengauss/data/postgresql.conf
+# 配置 listen_addresses = '*'
 # 配置 password_encryption_type = 1
 
 gs_ctl -D $HOME/data reload
 # reload 后即可生效
 ```
 
-在 PostgreSQL 中创建数据库和用户：
+在 PostgreSQL 中创建数据库和用户(在修改密码规则后必须新建用户或修改密码才能使用)
 ```
 su - postgres
 
@@ -202,14 +209,43 @@ sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-t
 ```
 sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-tables-count=24 --threads=64 --time=60 --pgsql-host=127.0.0.1 --pgsql-port=5432 --pgsql-user=testuser --pgsql-password=openEuler12#$ --pgsql-db=testdb /usr/share/sysbench/tests/include/oltp_legacy/select.lua cleanup
 ```
-#### 测试结果
 
-详细结果参见 [logs](./logs) 目录。
+### 测试结果
+
+详细结果参见 [logs](./logs) 目录或下文。
+
+性能对比
+
+SQL statistics
+
+> rw: oltp 测试,包含读写 r:select 测试,仅读
+
+| Platform               | read    | write  | other  | total   | transactions | transactions/s | queries | queries/s | ignored errors | reconnects |
+|------------------------|---------|--------|--------|---------|--------------|----------------|---------|-----------|----------------|------------|
+| SG2042 @ 10 Threads rw | 278796  | 79654  | 39828  | 398278  | 11913        | 331.56         | 398278  | 6631.51   | 1              | 0          |
+| SG2042 @ 64 Threads rw | 952280  | 272041 | 136057 | 1360378 | 68009        | 1128.35        | 1360378 | 22750.22  | 11             | 0          |
+| SG2042 @ 64 Threads r  | 1851630 | 0      | 0      | 1851630 | 1851630      | 30766.50       | 1851630 | 30766.50  | 0              | 0          |
+
+Latency
+
+| Platform               | min   | avg   | max    | 95th percentile | sum        |
+|------------------------|-------|-------|--------|-----------------|------------|
+| SG2042 @ 10 Threads rw | 25.62 | 30.13 | 99.91  | 33.72           | 599938.70  |
+| SG2042 @ 64 Threads rw | 38.63 | 56.49 | 421.75 | 70.55           | 3842023.49 |
+| SG2042 @ 64 Threads rw | 1.12  | 2.06  | 353.15 | 3.30            | 3822093.08 |
+
+Threads fairness
+
+| Platform               | events avg | events stddev | execution time avg | execution time stddev |
+|------------------------|------------|---------------|--------------------|-----------------------|
+| SG2042 @ 10 Threads rw | 1991.3000  | 32.68         | 59.9939            | 0.01                  |
+| SG2042 @ 64 Threads rw | 1062.6406  | 24.58         | 60.0316            | 0.03                  |
+| SG2042 @ 64 Threads r  | 28931.7188 | 1217.10       | 59.7202            | 0.03                  |
 
 
-#### Raw data / log
+#### 详细测试结果
 
-<details><summary>Click to expand</summary>
+<details><summary>详细测试结果</summary>
 
 SG2042 openEuler 2403 10 线程
 
