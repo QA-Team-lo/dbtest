@@ -2,17 +2,108 @@
 
 ## 功能测试
 
+### 准备测试环境
+
+在 PostgreSQL 中创建数据库和用户：
+```
+# 切换至 opengauss 用户
+su opengauss
+
+# 连接数据库
+gsql -d postgres
+```
+
+当 gsql 连接数据库成功后，在 gsql 交互界面中输入
+```sql
+alter role "opengauss" password "openGauss@2024"; -- 修改默认用户密码
+
+CREATE USER testuser WITH PASSWORD 'openEuler12#$'; -- 创建用户
+
+CREATE DATABASE testdb owner testuser; -- 创建数据库
+```
+
+
+修改 opengauss 配置文件
+```
+vim /var/lib/opengauss/data/postgresql.conf
+# 配置 listen_addresses = '*'
+# 配置 password_encryption_type = 1
+
+vim /var/lib/opengauss/data/pg_hba.conf
+# 末尾增加: 
+# host     all          testuser           0.0.0.0/0               md5
+
+gs_ctl -D $HOME/data reload
+# reload 后即可生效
+```
+
 ### 本地测试
 
+使用 `gsql -U testuser -d testdb` 连接数据库，创建表，并作简单的增删查操作
+```sql
+create table phonebook (
+    id serial primary key,
+    name varchar(20),
+    phone varchar(20)
+);
+
+insert into phonebook (name, phone) values ('工商银行', '95588');
+insert into phonebook (name, phone) values ('招商银行', '95555');
+insert into phonebook (name, phone) values ('农业银行', '95599');
+
+insert into phonebook (name, phone) values ('邮政快递', '11183');
+insert into phonebook (name, phone) values ('顺丰快递', '95338');
+insert into phonebook (name, phone) values ('京东物流', '95311');
+
+select * from phonebook where name like '%银行';
+select count(*) from phonebook;
+delete from phonebook where name = '农业银行';
+select * from phonebook;
+```
 
 ### 远程测试
 
+下载 [JDBC_6.0.0](https://opengauss.org/zh/download/) 数据库驱动
+
+启动 Dbeaver,并选择菜单->数据库->驱动管理器，在弹出对话框中，选择新建
+![新建数据库驱动](./image/1.png)
+
+填写新建驱动名称->选择 JDBC 驱动文件->选择 JDBC Driver 类
+![添加数据库驱动](./image/3.png)
+
+填写 URL 模板，值为:`jdbc:opengauss://{host}:{port}/{database}`,勾选嵌入，其他复选框不选择，然后确认，添加驱动即完成
+![编辑数据库驱动](./image/2.png)
+
+选择菜单->数据库->新建连接，在弹出的框中搜索上一步中新建的 JDBC 驱动名,选择后点击下一步,如下图示
+![新建连接](./image/4.png)
+
+在弹出框中填写 openGauss 主机地址、端口、将要连接的数据库以及认证用户名和密码，点击测试链接验证是否可正确连接
+![测试连接](./image/5.png)
+
+测试结果
+![展示](./image/6.png)
 
 ## 性能测试
 
 ### sysbench
 
-首先，在 PostgreSQL 中创建数据库和用户：
+#### 准备测试
+
+安装 sysbench
+```
+sudo dnf install sysbench
+```
+
+修改 opengauss 配置文件
+```
+vim /var/lib/opengauss/data/postgresql.conf
+# 配置 password_encryption_type = 1
+
+gs_ctl -D $HOME/data reload
+# reload 后即可生效
+```
+
+在 PostgreSQL 中创建数据库和用户：
 ```
 su - postgres
 
@@ -42,7 +133,6 @@ sysbench --db-driver=pgsql --oltp-table-size=100000 --oltp-tables-count=24 --thr
 ```
 
 使用下列命令验证生成的数据
-
 ```log
 [opengauss@openeuler-riscv64 openeuler]$ gsql -U testuser -d testdb
 Password for user testuser: 
@@ -95,6 +185,8 @@ Indexes:
 testdb=> \q
 ```
 
+#### 运行测试
+
 执行读/写测试
 ```
 sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-tables-count=24 --threads=64 --time=60 --pgsql-host=127.0.0.1 --pgsql-port=5432 --pgsql-user=testuser --pgsql-password=openEuler12#$ --pgsql-db=testdb /usr/share/sysbench/tests/include/oltp_legacy/oltp.lua run
@@ -108,7 +200,7 @@ sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-t
 
 清理测试数据
 ```
-sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-tables-count=24 --pgsql-host=127.0.0.1 --pgsql-port=5432 --pgsql-user=testuser --pgsql-password=openEuler12#$ --pgsql-db=testdb cleanup
+sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-tables-count=24 --threads=64 --time=60 --pgsql-host=127.0.0.1 --pgsql-port=5432 --pgsql-user=testuser --pgsql-password=openEuler12#$ --pgsql-db=testdb /usr/share/sysbench/tests/include/oltp_legacy/select.lua cleanup
 ```
 #### 测试结果
 
@@ -119,7 +211,7 @@ sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-t
 
 <details><summary>Click to expand</summary>
 
-SG2042 openEuler 2403 10线程
+SG2042 openEuler 2403 10 线程
 
 ```log
 [openeuler@openeuler-riscv64 ~]$ sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-tables-count=24 --threads=10 --time=60 --pgsql-host=127.0.0.1 --pgsql-port=5432 --pgsql-user=testuser --pgsql-password=openEuler12#$ -
@@ -193,7 +285,7 @@ Threads fairness:
     execution time (avg/stddev):   59.9939/0.01
 ```
 
-SG2042 openEuler 2403 64线程
+SG2042 openEuler 2403 64 线程
 
 ```log
 [openeuler@openeuler-riscv64 ~]$ sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-tables-count=24 --threads=64 --time=60 --pgsql-host=127.0.0.1 --pgsql-port=5432 --pgsql-user=testuser --pgsql-password=openEuler12#$ --pgsql-db=testdb /usr/shar
