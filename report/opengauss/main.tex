@@ -23,8 +23,7 @@
 \newpage
 
 \begin{markdown}
-
-  # 简介
+# 简介
 
 ## 软件说明
 openGauss 是一个免费的开源关系型数据库管理系统，主要由华为开发和维护。它是一个广泛使用的代码库，为企业级应用提供了高性能、高可用性和高安全性的数据库解决方案。
@@ -33,7 +32,9 @@ openGauss 是一个免费的开源关系型数据库管理系统，主要由华�
 本次测试旨在验证 openGauss 在 RISC-V 平台上的可用性，特别是在 Milk-V Pioneer Box 和 Sipeed LicheePi 4A 两个典型平台上的表现。本报告通过手动测试的方法，从目前的平台兼容性及用户的日常使用体验两个角度评估了 openGauss 当前在 RISC-V 平台上的可用性，并给出了定性和定量的结论，为其未来进一步的优化和支持提供参考。
 
 ## 测试概述
-<!-- TODO: 测试概述 -->
+在本次测试中，我们评估了 openGauss 数据库在 RISC-V 平台上的可靠性和性能表现，尤其是在 Milk-V Pioneer Box 和 Sipeed LicheePi 4A 这两个平台上。Milk-V Pioneer Box 具备较强的处理能力，可以成功安装和运行 openGauss 数据库，并支持本地和远程连接。
+测试使用了 openEuler 24.03 LTS 系统并手动编译 openGauss 6.0.0 版本。在功能测试部分，我们首先通过 gsql 和 dbeaver 工具验证了基本的数据库操作，包括用户和数据库的创建、基本的表操作等。在性能测试中，我们使用 sysbench 工具进行了读写和只读性能测试。为了进行比较，也在 x86_64 平台上进行同样的测试。
+
 
 ## 测试总结
 目前 openGauss 在 riscv 上仅支持使用 openEuler 系统进行编译与安装,licheepi 4a 因为性能不足而无法启动 openGauss 服务,
@@ -467,7 +468,8 @@ x86_64 机器运行在 PVE 虚拟化环境下。通常来说，KVM 虚拟化会�
 
 # 总结
 
-<!-- TODO:一段总结 -->
+本次测试确认了 openGauss 在 RISC-V 平台上的初步可用性。在 Milk-V Pioneer Box 上，openGauss 能够稳定运行并提供良好的用户体验，而在性能更低的 Sipeed LicheePi 4A 上，由于硬件的限制，无法顺利启动服务。
+性能测试结果显示，在多线程操作下，Milk-V Pioneer Box 的性能与 x86_64 平台相比仍有差距。具体来说，在读写混合负载下，x86_64 平台的事务和查询处理能力明显高于 Pioneer Box。
 
 \end{markdown}
 
