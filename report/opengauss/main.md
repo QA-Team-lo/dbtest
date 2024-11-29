@@ -79,24 +79,23 @@ sudo dd if=sg2042_firmware_linuxboot.img of=/dev/sdb bs=1M status=progress
 此文档针对 riscv 平台编写，在其他平台下使用请自行配置 qemu
 
 #### 编译
+
+使用 openEuler 容器编译可参考 https://github.com/QA-Team-lo/dbtest/blob/main/opengauss/install.md
+
+以下使用 Pioneer Box 裸机编译
 下载源码
 
 ```bash
-git clone https://gitee.com/opengauss/riscv opengauss-riscv
-cd opengauss-riscv
+su 
+mkdir /root/rpmbuild
+cd /root/rpmbuild
+git clone https://gitee.com/opengauss/riscv SOURCES
+cd SOURCES
 ```
 
-启动 openeuler 容器
-
-```bash
-docker run -it --name oerv-opengauss-build -v$(pwd):/root/rpmbuild/SOURCES xfan1024/openeuler:24.03-riscv64
-```
-
-在容器中配置编译环境
+配置编译环境
 
 ```
-cd /root/rpmbuild/SOURCES
-
 # 安装必要工具
 dnf install -y rpm-build rpmdevtools dnf-plugins-core
 # 安装编译依赖
@@ -112,17 +111,18 @@ rpmbuild -ba opengauss-server.spec
 ```
 
 #### 安装
-等待一段时间，编译完成后，即可安装
+等待一段时间，编译完成后，安装
 
 ```bash
 cd ../RPMS/riscv64/
-dnf install -y opengauss-server-5.1.0-1.riscv64.rpm
+dnf install -y opengauss-server-6.0.0-1.riscv64.rpm
 ```
 
 #### 初始化 & 启动
 
+```bash
+systemctl enable --now opengauss-server
 ```
-
 
 ### 功能测试
 
