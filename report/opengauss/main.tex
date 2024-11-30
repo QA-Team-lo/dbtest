@@ -35,7 +35,7 @@ openGauss 是一个免费的开源关系型数据库管理系统，主要由华�
 测试使用了 openEuler 24.03 LTS 系统并手动编译 openGauss 6.0.0 版本。功能测试部分首先通过 gsql 和 dbeaver 工具验证了基本的数据库操作，包括用户和数据库的创建、基本的表操作等。性能测试则主要使用 sysbench 工具进行读写和只读性能测试，并在 x86\_64 平台上进行同样的测试作为对照。
 
 \subsection{测试总结}
-目前 openGauss 在 RISC-V 上仅支持使用 openEuler 系统进行编译与安装。测试结果显示 Pioneer Box 可以正常本地和远程连接与使用，而 LicheePi 4a 则因性能不足而无法启动 openGauss 服务。
+目前 openGauss 在 RISC-V 上仅支持使用 openEuler 系统进行编译与安装。测试结果显示 Pioneer Box 可以正常本地和远程连接与使用，而 LicheePi 4A 则因性能不足而无法启动 openGauss 服务。
 
 sysbench 在 Pioneer Box 上的性能测试结果如下：
 
@@ -129,6 +129,7 @@ x86\_64 （对照组）:
 \begin{itemize}
     \item CPU: Xeon Gold 5215L CPU @ 2.50GHz, 10*vCPU (Proxmox VE 8.0 虚拟化环境)
     \item RAM: 8 GiB
+    \item Host: 4*2.5" SAS HDD，硬 RAID-5 Guest: VirtIO SCSI Single, Write Back Cache, io\_uring
 \end{itemize}
 
 \subsection{软件环境}
@@ -512,7 +513,7 @@ sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-t
 \section{测试结果}
 
 \subsection{功能测试}
-LicheePi 4a 由于性能较弱, 启动 openGauss 服务时超时。Pioneer Box 可以正常进行本地和远程连接。
+LicheePi 4A 由于性能较弱, 启动 openGauss 服务时超时。Pioneer Box 可以正常进行本地和远程连接。
 
 使用 dbeaver 远程连接 openGauss 数据库结果如图所示:
 
@@ -610,7 +611,7 @@ X86\_64 @ 10 Threads rw & 4174.7000 & 12.74 & 59.9913 & 0.00 \\
 
 \subsection{sysbench 原始测试数据}
 
-\paragraph{SG2042 openEuler 2403 10 线程 读写}
+\paragraph{SG2042 openEuler 24.03 LTS 10 线程 读写}
 
 \begin{minted}{text}
 sysbench 1.0.20 (using system LuaJIT 2.1.ROLLING)
@@ -681,7 +682,7 @@ Threads fairness:
     
 \end{minted}
 
-\paragraph{SG2042 openEuler 2403 64 线程 读写}
+\paragraph{SG2042 openEuler 24.03 LTS 64 线程 读写}
 
 \begin{minted}{text}
 sysbench 1.0.20 (using system LuaJIT 2.1.ROLLING)
@@ -752,7 +753,7 @@ Threads fairness:
     execution time (avg/stddev):   60.0316/0.03
 \end{minted}
 
-\paragraph{SG2042 openEuler 2403 64 线程 仅读}
+\paragraph{SG2042 openEuler 24.03 LTS 64 线程 仅读}
 
 \begin{minted}{text}
 sysbench 1.0.20 (using system LuaJIT 2.1.ROLLING)
