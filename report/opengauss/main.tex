@@ -162,14 +162,16 @@ x86\_64 （对照组）:
 
 使用如下指令刷写镜像。
 
-\begin{verbatim}
+\begin{minted}{bash}
+  
 fastboot flash ram u-boot-with-spl-lpi4a-16g.bin
 fastboot reboot
 # 稍等几秒，等待开发板重启后重新连接至电脑
 fastboot flash uboot u-boot-with-spl-lpi4a-16g.bin
 fastboot flash boot openEuler-24.03-LTS-riscv64-lpi4a-base-boot.ext4
 fastboot flash root openEuler-24.03-LTS-riscv64-lpi4a-base-root.ext4
-\end{verbatim}
+
+\end{minted}
 
 \paragraph{Milk-V Pioneer Box}
 下载\href{https://mirrors.hust.edu.cn/openeuler/openEuler-24.03-LTS/embedded_img/riscv64/SG2042/openEuler-24.03-LTS-riscv64-sg2042.img.zip}{系统镜像}，解压，使用 \verb|dd| 烧录至 NVMe 硬盘。
@@ -178,14 +180,17 @@ fastboot flash root openEuler-24.03-LTS-riscv64-lpi4a-base-root.ext4
 
 请将下面的 \verb|/dev/sda| \verb|/dev/sdb| 替换成实际使用的硬盘和存储卡位置。
 
-\begin{verbatim}
+\begin{minted}{bash}
+  
 unzip openEuler-24.03-LTS-riscv64-sg2042.img.zip
 sudo wipefs -af /dev/sda
 sudo dd if=openEuler-24.03-LTS-riscv64-sg2042.img of=/dev/sda bs=1M status=progress
 sudo eject /dev/sda
 unzip sg2042_firmware_linuxboot.img.zip
 sudo dd if=sg2042_firmware_linuxboot.img of=/dev/sdb bs=1M status=progress
-\end{verbatim}
+
+\end{minted}
+
 将存储卡和硬盘插入系统上电开机。
 
 \subsubsection{安装 openGauss 数据库}
@@ -200,61 +205,74 @@ sudo dd if=sg2042_firmware_linuxboot.img of=/dev/sdb bs=1M status=progress
 
 \paragraph{下载源码}
 
-\begin{verbatim}
+\begin{minted}{bash}
+  
 su 
 mkdir /root/rpmbuild
 cd /root/rpmbuild
 git clone https://gitee.com/opengauss/riscv SOURCES
 cd SOURCES
-\end{verbatim}
+
+\end{minted}
 
 \paragraph{配置编译环境}
 
-\begin{verbatim}
+\begin{minted}{bash}
+  
 # 安装必要工具
 dnf install -y rpm-build rpmdevtools dnf-plugins-core
 # 安装编译依赖
 yum-builddep -y opengauss-server.spec
 # 下载源码
 spectool -g opengauss-server.spec
-\end{verbatim}
+
+\end{minted}
 
 \paragraph{编译 rpm 包}
 
-\begin{verbatim}
-rpmbuild -ba opengauss-server.spec
-\end{verbatim}
+\begin{minted}{bash}
+  
+  rpmbuild -ba opengauss-server.spec
+  
+\end{minted}
 
 \paragraph{安装}
 
 等待一段时间编译完成后，进行安装：
 
-\begin{verbatim}
+\begin{minted}{bash}
+  
 cd ../RPMS/riscv64/
 dnf install -y opengauss-server-6.0.0-1.riscv64.rpm
-\end{verbatim}
+
+\end{minted}
 
 \paragraph{初始化 \& 启动}
 
-\begin{verbatim}
-systemctl enable --now opengauss-server
-\end{verbatim}
+\begin{minted}{bash}
+  
+  systemctl enable --now opengauss-server
+  
+\end{minted}
 
 \subsection{功能测试}
 
 在 PostgreSQL 中创建数据库和用户：
 
-\begin{verbatim}
+\begin{minted}{bash}
+  
 # 切换至 opengauss 用户
 su opengauss
 
 # 连接数据库
 gsql -d postgres
-\end{verbatim}
+
+\end{minted}
 
 当 gsql 连接数据库成功后，在 gsql 交互界面中输入：
 
-\begin{verbatim}
+\begin{minted}{sql}
+  
 -- 修改默认用户密码
 alter role "opengauss" password "openGauss@2024";
 
@@ -263,12 +281,14 @@ CREATE USER testuser WITH PASSWORD 'openEuler12#$';
 
 -- 创建数据库
 CREATE DATABASE testdb owner testuser;
-\end{verbatim}
+
+\end{minted}
 
 
 修改 openGauss 配置文件：
 
-\begin{verbatim}
+\begin{minted}{bash}
+  
 vim /var/lib/opengauss/data/postgresql.conf
 # 配置 listen_addresses = '*'
 # 配置 password_encryption_type = 1
@@ -277,31 +297,38 @@ vim /var/lib/opengauss/data/pg_hba.conf
 # 末尾增加: 
 # host     all          testuser           0.0.0.0/0               md5
 
-gs_ctl -D $HOME/data reload
+gs\_ctl -D $HOME/data reload
 # reload 后即可生效
-\end{verbatim}
+
+\end{minted}
 
 \subsubsection{性能测试}
 
 安装 sysbench：
 
-\begin{verbatim}
-sudo dnf install sysbench
-\end{verbatim}
+\begin{minted}{bash}
+  
+  sudo dnf install sysbench
+  
+\end{minted}
 
 修改 openGauss 配置文件：
 
-\begin{verbatim}
+\begin{minted}{bash}
+  
 vim /var/lib/opengauss/data/postgresql.conf
 # 配置 listen_addresses = '*'
 # 配置 password_encryption_type = 1
 
-gs_ctl -D $HOME/data reload
+gs\_ctl -D $HOME/data reload
 # reload 后即可生效
-\end{verbatim}
+
+\end{minted}
 
 在 openGauss 中创建数据库和用户(修改密码规则后必须新建用户或修改密码才能使用)：
-\begin{verbatim}
+
+\begin{minted}{bash}
+  
 su - opengauss
 
 gsql -d postgres
@@ -309,11 +336,13 @@ gsql -d postgres
 CREATE USER testuser WITH PASSWORD 'openEuler12#$';
 
 CREATE DATABASE testdb owner testuser;
-\end{verbatim}
+
+\end{minted}
 
 授予权限用于测试：
 
-\begin{verbatim}
+\begin{minted}{bash}
+  
 [opengauss@openeuler-riscv64 openeuler]$ gsql -d postgres
 gsql ((openGauss-lite 6.0.0 build ) compiled at 2024-11-22 20:54:23 commit 0 last mr  release)
 Non-SSL connection (SSL connection is recommended when requiring high-security)
@@ -323,7 +352,8 @@ openGauss=# GRANT ALL ON SCHEMA public TO testuser;
 GRANT
 openGauss=# GRANT ALL PRIVILEGES TO testuser; 
 ALTER ROLE
-\end{verbatim}
+
+\end{minted}
 
 
 \section{测试内容}
@@ -334,7 +364,8 @@ ALTER ROLE
 
 使用 \verb|gsql -U testuser -d testdb| 连接数据库，创建表，并作简单的增删查操作：
 
-\begin{verbatim}
+\begin{minted}{sql}
+  
 create table phonebook (
     id serial primary key,
     name varchar(20),
@@ -353,7 +384,8 @@ select * from phonebook where name like '%银行';
 select count(*) from phonebook;
 delete from phonebook where name = '农业银行';
 select * from phonebook;
-\end{verbatim}
+
+\end{minted}
 
 \subsubsection{远程测试}
 
@@ -362,31 +394,31 @@ select * from phonebook;
 启动 dbeaver, 选择"菜单->数据库->驱动管理器"，在弹出对话框中，选择"新建"：
 
 \begin{center}
-\includegraphics[width=9cm]{./image/1.png}
+\includegraphics[width=12cm]{./image/1.png}
 \end{center}
 
 填写新建驱动名称->选择 JDBC 驱动文件, 添加解压出来的\verb|opengauss-jdbc-6.0.0.jar|->选择 JDBC Driver 类：
 
 \begin{center}
-\includegraphics[width=9cm]{./image/3.png}
+\includegraphics[width=12cm]{./image/3.png}
 \end{center}
 
 填写 URL 模板，值为:\verb|jdbc:opengauss://{host}:{port}/{database}|,勾选嵌入，其他复选框不选择，并点击确认，即完成驱动添加操作：
 
 \begin{center}
-\includegraphics[width=9cm]{./image/2.png}
+\includegraphics[width=12cm]{./image/2.png}
 \end{center}
 
 选择菜单->数据库->新建连接，在弹出的框中搜索上一步中新建的 JDBC 驱动名,选择后点击下一步：
 
 \begin{center}
-\includegraphics[width=9cm]{./image/4.png}
+\includegraphics[width=12cm]{./image/4.png}
 \end{center}
 
 在弹出框中填写 openGauss 主机地址、端口、将要连接的数据库以及认证用户名和密码，点击测试链接验证是否可正确连接：
 
 \begin{center}
-\includegraphics[width=9cm]{./image/5.png}
+\includegraphics[width=12cm]{./image/5.png}
 \end{center}
 
 
@@ -394,13 +426,16 @@ select * from phonebook;
 
 初始化数据库：
 
-\begin{verbatim}
-sysbench --db-driver=pgsql --oltp-table-size=100000 --oltp-tables-count=24 --threads=1 --pgsql-host=127.0.0.1 --pgsql-port=5432 --pgsql-user=testuser --pgsql-password=openEuler12#$ --pgsql-db=testdb  /usr/share/sysbench/tests/include/oltp_legacy/parallel_prepare.lua run
-\end{verbatim}
+\begin{minted}{bash}
+  
+  sysbench --db-driver=pgsql --oltp-table-size=100000 --oltp-tables-count=24 --threads=1 --pgsql-host=127.0.0.1 --pgsql-port=5432 --pgsql-user=testuser --pgsql-password=openEuler12#$ --pgsql-db=testdb  /usr/share/sysbench/tests/include/oltp_legacy/parallel_prepare.lua run
+  
+\end{minted}
 
 使用下列命令验证生成的数据：
 
-\begin{verbatim}
+\begin{minted}{bash}
+  
 [opengauss@openeuler-riscv64 openeuler]$ gsql -U testuser -d testdb
 Password for user testuser: 
 gsql ((openGauss-lite 6.0.0 build ) compiled at 2024-11-22 20:54:23 commit 0 last mr  release)
@@ -450,27 +485,28 @@ Indexes:
     "k_1" btree (k) TABLESPACE pg_default
 
 testdb=> \q
-\end{verbatim}
+
+\end{minted}
 
 
 执行读/写测试：
 
-\begin{verbatim}
+\begin{minted}{bash}
 sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-tables-count=24 --threads=64 --time=60 --pgsql-host=127.0.0.1 --pgsql-port=5432 --pgsql-user=testuser --pgsql-password=openEuler12#$ --pgsql-db=testdb /usr/share/sysbench/tests/include/oltp_legacy/oltp.lua run
-\end{verbatim}
+\end{minted}
 上述命令将从名为 /usr/share/sysbench/tests/include/oltp\_legacy/oltp.lua 的 Lua 脚本生成 OLTP 工作负载，针对主服务器上 24 个表的 100,000 行（具有 64 个工作线程）持续 60 秒）。sysbench 每 2 秒将报告中间统计信息（\verb!--report-interval=2!）。
 
 执行只读测试：
 
-\begin{verbatim}
+\begin{minted}{bash}
 sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-tables-count=24 --threads=64 --time=60 --pgsql-host=127.0.0.1 --pgsql-port=5432 --pgsql-user=testuser --pgsql-password=openEuler12#$ --pgsql-db=testdb /usr/share/sysbench/tests/include/oltp_legacy/select.lua run
-\end{verbatim}
+\end{minted}
 
 清理测试数据：
 
-\begin{verbatim}
+\begin{minted}{bash}
 sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-tables-count=24 --threads=64 --time=60 --pgsql-host=127.0.0.1 --pgsql-port=5432 --pgsql-user=testuser --pgsql-password=openEuler12#$ --pgsql-db=testdb /usr/share/sysbench/tests/include/oltp_legacy/select.lua cleanup
-\end{verbatim}
+\end{minted}
 
 
 \section{测试结果}
@@ -575,7 +611,7 @@ X86\_64 @ 10 Threads rw & 4174.7000 & 12.74 & 59.9913 & 0.00 \\
 
 \paragraph{SG2042 openEuler 2403 10 线程 读写}
 
-\begin{minted}
+\begin{minted}{log}
 sysbench 1.0.20 (using system LuaJIT 2.1.ROLLING)
 
 Running the test with following options:
@@ -645,7 +681,7 @@ Threads fairness:
 
 \paragraph{SG2042 openEuler 2403 64 线程 读写}
 
-\begin{minted}
+\begin{minted}{log}
 sysbench 1.0.20 (using system LuaJIT 2.1.ROLLING)
 
 Running the test with following options:
@@ -716,7 +752,7 @@ Threads fairness:
 
 \paragraph{SG2042 openEuler 2403 64 线程 仅读}
 
-\begin{minted}
+\begin{minted}{log}
 sysbench 1.0.20 (using system LuaJIT 2.1.ROLLING)
 
 Running the test with following options:
