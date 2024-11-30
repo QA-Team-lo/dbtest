@@ -258,7 +258,9 @@ ALTER ROLE
 ## 手动测试
 
 ### 本地测试
+
 使用 `gsql -U testuser -d testdb` 连接数据库，创建表，并作简单的增删查操作
+
 ```sql
 create table phonebook (
     id serial primary key,
@@ -284,26 +286,26 @@ select * from phonebook;
 
 ### 远程测试
 
-下载 [JDBC_6.0.0](https://opengauss.org/zh/download/) 数据库驱动并解压
+下载 [JDBC\_6.0.0](https://opengauss.org/zh/download/) 数据库驱动并解压
 
 启动 Dbeaver,并选择菜单->数据库->驱动管理器，在弹出对话框中，选择新建
-
+\setkeys{Gin}{width=.8\linewidth}
 ![新建数据库驱动](./image/1.png)
 
 填写新建驱动名称->选择 JDBC 驱动文件,添加解压出来的`opengauss-jdbc-6.0.0.jar`->选择 JDBC Driver 类
-
+\setkeys{Gin}{width=.8\linewidth}
 ![添加数据库驱动](./image/3.png)
 
 填写 URL 模板，值为:`jdbc:opengauss://{host}:{port}/{database}`,勾选嵌入，其他复选框不选择，然后确认，添加驱动即完成
-
+\setkeys{Gin}{width=.8\linewidth}
 ![编辑数据库驱动](./image/2.png)
 
 选择菜单->数据库->新建连接，在弹出的框中搜索上一步中新建的 JDBC 驱动名,选择后点击下一步,如下图示
-
+\setkeys{Gin}{width=.8\linewidth}
 ![新建连接](./image/4.png)
 
 在弹出框中填写 openGauss 主机地址、端口、将要连接的数据库以及认证用户名和密码，点击测试链接验证是否可正确连接
-
+\setkeys{Gin}{width=.8\linewidth}
 ![测试连接](./image/5.png)
 
 
@@ -391,10 +393,10 @@ sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-t
 ## 功能测试
 licheepi 4a 由于性能较弱,在启动 openGauss 服务时超时,而 Pioneer Box 可以正常进行本地和远程连接
 
-
 使用 dbeaver 远程连接 openGauss 数据库结果如图所示:
 
-<img src="./image/6.png" alt="description" style="width:50%;height:auto;">
+\setkeys{Gin}{width=.5\linewidth}
+!![展示](./image/6.png)
 
 ## 性能测试
 
