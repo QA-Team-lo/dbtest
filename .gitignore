@@ -308,3 +308,7 @@ TSWLatexianTemp*
 /report/*.in
 /report/opengauss/_markdown_main/
 /report/opengauss/main.luabridge.lua
+
+# temp tex file when markdown package is used
+*.md.tex
+*.markdown.in

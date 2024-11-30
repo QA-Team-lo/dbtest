@@ -49,7 +49,25 @@ git checkout v8.4.0
 make
 ```
 
+## 支持情况
+编译[TiDB](https://github.com/pingcap/tidb)和[pd](https://github.com/tikv/pd)这两个go项目时没有遇到问题，可以正常生成二进制产物并启动
+
+对于[TiKV](https://github.com/tikv/tikv)，虽有第三方的支持，但无论是官方的还是第三方fork，都会遇到以下问题：
+
+编译时若使用gcc11/12/13工具链，会得到报错
+
+```log
+error: unrecognized command-line option '-mno-omit-leaf-frame-pointer'; did you mean '-fno-omit-frame-pointer'?
+```
+
+若切换clang工具链，在编译[`tikv-jemalloc-sys-0.5.0+5.3.0`](https://github.com/tikv/jemallocator/tree/tikv-jemalloc-sys-0.5.3)时会报错
+
+```log
+Invalid configuration `riscv64gc-unknown-linux-gnu': machine `riscv64gc-unknown' not recognized
+```
+
 ## ref
 https://docs.pingcap.com/zh/
 https://github.com/KevinMX/PLCT-Works/blob/main/misc/month12/TiDB/TiDB.md
 https://tikv.github.io/tikv-dev-guide/get-started/build-tikv-from-source.html
+https://github.com/xhebox/tikv/tree/rv64

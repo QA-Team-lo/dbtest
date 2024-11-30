@@ -10,7 +10,7 @@
 
 %%------------------摘要-------------%%
 \begin{abstract}
-本次报告旨在验证 OceanBase 数据库在 RISC-V 平台上的可用性。通过官方文档和社区尝试，发现 OceanBase 当前仅支持 x86_64 架构，不支持 RISC-V 架构。尝试编译 OceanBase 代码时，系统会检测到 RISC-V 架构并报错。社区开发者提交了相关 PR，但仍未能成功编译。这表明 OceanBase 在 RISC-V 平台上的支持仍需进一步开发和优化。
+本次报告旨在验证 OceanBase 数据库在 RISC-V 平台上的可用性。通过官方文档和社区尝试，发现 OceanBase 当前不支持 RISC-V 架构。尝试编译 OceanBase 代码时，系统会检测到 RISC-V 架构并报错。社区开发者提交了相关 PR，但仍未能成功编译。这表明 OceanBase 在 RISC-V 平台上的支持仍需进一步开发和优化。
 \end{abstract}
 
 \thispagestyle{empty} % 首页不显示页码
@@ -33,29 +33,53 @@ OceanBase 是一个分布式关系数据库系统，主要由蚂蚁集团开发�
 本次测试旨在验证 OceanBase 数据库在 RISC-V 平台上的可用性。通过官方文档和社区尝试，评估其在 RISC-V 平台上的编译和运行情况，并为未来的优化和支持提供参考。
 
 ## 测试概述
-本次测试通过官方提供的编译工具链和社区开发者的尝试，评估了 OceanBase 在 RISC-V 平台上的编译情况。测试发现，官方文档明确指出当前仅支持 x86_64 架构，不支持 RISC-V 架构。尝试编译 OceanBase 代码时，系统会检测到 RISC-V 架构并报错。社区开发者提交了相关 PR，但仍未能成功编译。
+本次测试通过官方提供的编译工具链和社区开发者的尝试，评估了 OceanBase 在 RISC-V 平台上的编译情况。测试发现，官方文档明确指出当前不支持 RISC-V 架构。尝试编译 OceanBase 代码时，系统会检测到 RISC-V 架构并报错。社区开发者提交了相关 PR，但仍未能成功编译。
 
 ## 测试总结
+
 本次测试结果如下：
 
 | 平台        | 发行版        | 测试结果              |
 |-------------|---------------|-----------------------|
-| RISC-V      |  Any         | 不支持                |
+| RISC-V      |  Ubuntu 22.04      | 无法构建，不支持        |
+| RISC-V      |  Any         | 预计同样无法构建，不支持 |
 
 # 环境说明
 
 ## 硬件环境
 本次测试主要在 RISC-V 平台上进行，机器硬件配置为：
 
-- CPU: （待补）
-- RAM: （待补）
-- Storage: （待补）
+Milk-V Pioneer Box:
+- CPU: SG2042 64 Core C920@2.0GHz
+- RAM: 4 channel 3200Hz 128GB DDR4 SODIMM (32GB * 4)
+- SSD: PCIe 3.0 x 4 1TB
+- GPU: AMD R5 230
 
 ## 软件环境
+
+Ubuntu 22.04 Docker on openEuler 24.03 LTS
 
 ## 环境搭建
 
 ### 安装系统
+
+#### Milk-V Pioneer Box
+
+下载[系统镜像](https://mirrors.hust.edu.cn/openeuler/openEuler-24.03-LTS/embedded_img/riscv64/SG2042/openEuler-24.03-LTS-riscv64-sg2042.img.zip)，解压，使用 `dd` 烧录至 NVMe 硬盘。
+
+下载[固件](https://mirrors.hust.edu.cn/openeuler/openEuler-24.03-LTS/embedded_img/riscv64/SG2042/sg2042_firmware_linuxboot.img.zip)，解压，使用 `dd` 烧录至 microSD 卡。
+
+实际操作时，请将下面的 `/dev/sda`、`/dev/sdb` 替换成真实的硬盘和存储卡位置。
+
+```shell
+unzip openEuler-24.03-LTS-riscv64-sg2042.img.zip
+sudo wipefs -af /dev/sda
+sudo dd if=openEuler-24.03-LTS-riscv64-sg2042.img of=/dev/sda bs=1M status=progress
+sudo eject /dev/sda
+unzip sg2042_firmware_linuxboot.img.zip
+sudo dd if=sg2042_firmware_linuxboot.img of=/dev/sdb bs=1M status=progress
+```
+将存储卡和硬盘插入系统上电开机。
 
 ### 编译 OceanBase
 
@@ -66,8 +90,6 @@ OceanBase 是一个分布式关系数据库系统，主要由蚂蚁集团开发�
 ```bash
 sudo apt install git wget rpm rpm2cpio cpio make build-essential binutils m4
 ```
-
-#### compile
 
 尝试使用主仓库中的 `build.sh` 进行编译，会检测到 RISC-V 架构并不在支持列表中。
 
@@ -86,7 +108,7 @@ sudo apt install git wget rpm rpm2cpio cpio make build-essential binutils m4
 
 # 总结
 
-本次报告评估了 OceanBase 数据库在 RISC-V 平台上的可用性和性能。通过测试发现，OceanBase 当前仅支持 x86_64 架构，不支持 RISC-V 架构。尝试编译 OceanBase 代码时，系统会检测到 RISC-V 架构并报错。尽管社区开发者提交了相关 PR，但仍未能成功编译。这表明 OceanBase 在 RISC-V 平台上的支持仍需进一步开发和优化。
+本次报告评估了 OceanBase 数据库在 RISC-V 平台上的可用性和性能。通过测试发现，OceanBase 当前不支持 RISC-V 架构。尝试编译 OceanBase 代码时，系统会检测到 RISC-V 架构并报错。尽管社区开发者提交了相关 PR，但仍未能成功编译。这表明 OceanBase 在 RISC-V 平台上的支持仍需进一步开发和优化。
 
 \end{markdown}
 
@@ -95,11 +117,11 @@ sudo apt install git wget rpm rpm2cpio cpio make build-essential binutils m4
 
 \appendix
 
-以下是本报告的附录。本报告的 \href{https://github.com/QA-Team-lo/dbtest}{Github 仓库}。
+此处是本报告的附录。
 
-\begin{itemize}
-    \item ...
-\end{itemize}
+其他数据库测试内容可见本报告的 \href{https://github.com/QA-Team-lo/dbtest}{Github 仓库}。
+
+% TODO: 也许需要添加的更多附录信息
 
 \reference
 
