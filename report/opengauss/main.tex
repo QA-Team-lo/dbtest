@@ -10,7 +10,7 @@
 
 %%------------------摘要-------------%%
 \begin{abstract}
-在本次测试中，openGauss 数据库在 RISC-V 平台上表现出了初步的可用性。我们在 Milk-V Pioneer Box 和 Sipeed LicheePi 4A 两个典型平台上进行了测试。结果表明，Milk-V Pioneer Box 能够稳定运行 openGauss，并支持本地及远程连接，表现出较好的用户体验。然而，Sipeed LicheePi 4A 由于硬件性能的限制，无法正常启动 openGauss 服务。测试采用 openEuler 24.03 LTS 系统，并手动编译 openGauss 6.0.0 版本。功能测试涵盖了基本的数据库操作，确认了 openGauss 的基本功能正常可用。在性能测试中，通过 sysbench 工具，我们评估了数据库在多线程读写和只读场景下的性能。虽然 Milk-V Pioneer Box 在只读负载下表现相对较好，但整体性能仍不及 x86\_64 平台。本次测试为 openGauss 在 RISC-V 平台的进一步优化和支持提供了参考。未来的优化方向包括提升在低性能硬件平台上的表现，以及增加对更多操作系统和环境的支持，以提升其广泛性和竞争力。
+本次测试旨在验证 openGauss 数据库在 RISC-V 平台上的可用性，并选取了 Milk-V Pioneer Box 和 Sipeed LicheePi 4A 两个典型平台进行测试。结果表明，Milk-V Pioneer Box 能够稳定运行 openGauss，并支持本地及远程连接，表现出较好的用户体验。而 Sipeed LicheePi 4A 由于硬件性能的限制，无法正常启动 openGauss 服务。测试采用 openEuler 24.03 LTS 系统，并手动编译 openGauss 6.0.0 版本。功能测试涵盖了基本的数据库操作，确认了 openGauss 的基本功能正常可用。性能测试则通过 sysbench 工具对数据库在多线程读写和只读场景下的性能进行了评估。虽然 Milk-V Pioneer Box 在只读负载下表现相对较好，但整体性能仍不及 x86\_64 平台。本次测试证明了 openGauss 在 RISC-V 平台的初步可用性，为其在 RISC-V 上的进一步优化和支持提供了参考。
 \end{abstract}
 
 \thispagestyle{empty} % 首页不显示页码
@@ -31,14 +31,13 @@ openGauss 是一个免费的开源关系型数据库管理系统，主要由华�
 本次测试旨在验证 openGauss 在 RISC-V 平台上的可用性，特别是在 Milk-V Pioneer Box 和 Sipeed LicheePi 4A 两个典型平台上的表现。本报告通过手动测试的方法，从目前的平台兼容性及用户的日常使用体验两个角度评估了 openGauss 当前在 RISC-V 平台上的可用性，并给出了定性和定量的结论，为其未来进一步的优化和支持提供参考。
 
 \subsection{测试概述}
-在本次测试中，我们评估了 openGauss 数据库在 RISC-V 平台上的可靠性和性能表现，尤其是在 Milk-V Pioneer Box 和 Sipeed LicheePi 4A 这两个平台上。Milk-V Pioneer Box 具备较强的处理能力，可以成功安装和运行 openGauss 数据库，并支持本地和远程连接。
-测试使用了 openEuler 24.03 LTS 系统并手动编译 openGauss 6.0.0 版本。在功能测试部分，我们首先通过 gsql 和 dbeaver 工具验证了基本的数据库操作，包括用户和数据库的创建、基本的表操作等。在性能测试中，我们使用 sysbench 工具进行了读写和只读性能测试。为了进行比较，也在 x86\_64 平台上进行同样的测试。
+本次测试评估了 openGauss 数据库在 RISC-V 平台上的可靠性和性能表现，尤其是在 Milk-V Pioneer Box 和 Sipeed LicheePi 4A 两个典型 RISC-V 平台上。其中 Milk-V Pioneer Box 具备较强的处理能力，可以成功安装和运行 openGauss 数据库，并支持本地和远程连接。
+测试使用了 openEuler 24.03 LTS 系统并手动编译 openGauss 6.0.0 版本。功能测试部分首先通过 gsql 和 dbeaver 工具验证了基本的数据库操作，包括用户和数据库的创建、基本的表操作等。性能测试则主要使用 sysbench 工具进行读写和只读性能测试，并在 x86\_64 平台上进行同样的测试作为对照。
 
 \subsection{测试总结}
-目前 openGauss 在 riscv 上仅支持使用 openEuler 系统进行编译与安装,licheepi 4a 因为性能不足而无法启动 openGauss 服务,
-Pioneer Box 可以正常本地和远程连接与使用.
+目前 openGauss 在 RISC-V 上仅支持使用 openEuler 系统进行编译与安装。测试结果显示 Pioneer Box 可以正常本地和远程连接与使用，而 LicheePi 4a 则因性能不足而无法启动 openGauss 服务。
 
-使用 sysbench 在 Pioneer Box 上性能测试结果如下：
+sysbench 在 Pioneer Box 上的性能测试结果如下：
 
 \textbf{SQL statistics}
 
@@ -49,14 +48,28 @@ Pioneer Box 可以正常本地和远程连接与使用.
 
 \begin{table}[h]
 \centering
-\begin{tabular}{|l|r|r|r|r|r|r|r|r|r|r|}
+\begin{tabular}{|l|r|r|r|r|r|r|}
 \hline
-Platform & read & write & other & total & transactions & transactions/s & queries & queries/s & ignored errors & reconnects \\
+Platform & read & write & other & total & transactions & transactions/s \\
 \hline
-SG2042 @ 10 Threads rw & 278796 & 79654 & 39828 & 398278 & 11913 & 331.56 & 398278 & 6631.51 & 1 & 0 \\
-SG2042 @ 64 Threads rw & 952280 & 272041 & 136057 & 1360378 & 68009 & 1128.35 & 1360378 & 22750.22 & 11 & 0 \\
-SG2042 @ 64 Threads r  & 1851630 & 0      & 0      & 1851630 & 1851630 & 30766.50 & 1851630 & 30766.50 & 0 & 0 \\
-X86\_64 @ 10 Threads rw & 584472 & 166989 & 83497 & 834958 & 41747 & 695.69 & 834958 & 13914.18 & 1 & 0 \\
+SG2042 @ 10 Threads rw & 278796 & 79654 & 39828 & 398278 & 11913 & 331.56 \\
+SG2042 @ 64 Threads rw & 952280 & 272041 & 136057 & 1360378 & 68009 & 1128.35 \\
+SG2042 @ 64 Threads r  & 1851630 & 0      & 0      & 1851630 & 1851630 & 30766.50 \\
+X86\_64 @ 10 Threads rw & 584472 & 166989 & 83497 & 834958 & 41747 & 695.69 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|r|r|r|r|}
+\hline
+Platform & queries & queries/s & ignored errors & reconnects \\
+\hline
+SG2042 @ 10 Threads rw & 398278 & 6631.51 & 1 & 0 \\
+SG2042 @ 64 Threads rw & 1360378 & 22750.22 & 11 & 0 \\
+SG2042 @ 64 Threads r  & 1851630 & 30766.50 & 0 & 0 \\
+X86\_64 @ 10 Threads rw & 834958 & 13914.18 & 1 & 0 \\
 \hline
 \end{tabular}
 \end{table}
@@ -76,7 +89,6 @@ X86\_64 @ 10 Threads rw & 5.23 & 14.37 & 1569.33 & 21.50 & 599913.47 \\
 \hline
 \end{tabular}
 \end{table}
-
 
 \textbf{Threads fairness}
 
@@ -114,7 +126,7 @@ Sipeed LicheePi 4A:
     \item Storage: 128 GB eMMC
 \end{itemize}
 
-x86\_64:
+x86\_64 （对照组）:
 \begin{itemize}
     \item CPU: Xeon Gold 5215L CPU @ 2.50GHz, 10*vCPU (Proxmox VE 8.0 虚拟化环境)
     \item RAM: 8 GiB
@@ -136,17 +148,17 @@ x86\_64:
 
 从 \href{https://www.openeuler.org/zh/download/?version=openEuler%2024.03%20LTS}{官网} 下载镜像：
 
-选择 `RISC-V - 嵌入式 - lpi4a`。
+选择 \verb|RISC-V - 嵌入式 - lpi4a|。
 
-使用 `fastboot` 刷写镜像到板载 eMMC
+使用 \verb|fastboot| 刷写镜像到板载 eMMC。
 
-由于 LPi4A 默认的 USB VID/PID 通常不在默认 udev 规则内，在 Linux 下烧写时可能需要在 `fastboot` 前添加 `sudo`。
+由于 LPi4A 默认的 USB VID/PID 通常不在默认 udev 规则内，在 Linux 下烧写时可能需要在 \verb|fastboot| 前添加 \verb|sudo|。
 
 按住板上的 \textbf{BOOT} 按键不放，然后插入 USB-C 线缆上电（线缆另一头接 PC），即可进入 USB 烧录模式。
 
-在 Windows 下使用设备管理器查看，会出现 `USB download gadget` 设备。
+在 Windows 下使用设备管理器查看，会出现 \verb|USB download gadget| 设备。
 
-在 Linux 下，使用 `lsusb` 查看设备，会显示以下设备：`ID 2345:7654 T-HEAD USB download gadget`。
+在 Linux 下，使用 \verb|lsusb| 查看设备，会显示以下设备：\verb|ID 2345:7654 T-HEAD USB download gadget|。
 
 使用如下指令刷写镜像。
 
@@ -160,11 +172,11 @@ fastboot flash root openEuler-24.03-LTS-riscv64-lpi4a-base-root.ext4
 \end{verbatim}
 
 \paragraph{Milk-V Pioneer Box}
+下载\href{https://mirrors.hust.edu.cn/openeuler/openEuler-24.03-LTS/embedded_img/riscv64/SG2042/openEuler-24.03-LTS-riscv64-sg2042.img.zip}{系统镜像}，解压，使用 \verb|dd| 烧录至 NVMe 硬盘。
 
-下载\href{https://mirrors.hust.edu.cn/openeuler/openEuler-24.03-LTS/embedded_img/riscv64/SG2042/openEuler-24.03-LTS-riscv64-sg2042.img.zip}{系统镜像}，解压，使用 `dd` 烧录至 NVMe 硬盘。
-下载\href{https://mirrors.hust.edu.cn/openeuler/openEuler-24.03-LTS/embedded_img/riscv64/SG2042/sg2042_firmware_linuxboot.img.zip}{固件}，解压，使用 `dd` 烧录至 microSD 卡。
+下载\href{https://mirrors.hust.edu.cn/openeuler/openEuler-24.03-LTS/embedded_img/riscv64/SG2042/sg2042_firmware_linuxboot.img.zip}{固件}，解压，使用 \verb|dd| 烧录至 microSD 卡。
 
-请将下面的 `/dev/sda` `/dev/sdb` 替换成实际使用的硬盘和存储卡位置。
+请将下面的 \verb|/dev/sda| \verb|/dev/sdb| 替换成实际使用的硬盘和存储卡位置。
 
 \begin{verbatim}
 unzip openEuler-24.03-LTS-riscv64-sg2042.img.zip
@@ -178,17 +190,15 @@ sudo dd if=sg2042_firmware_linuxboot.img of=/dev/sdb bs=1M status=progress
 
 \subsubsection{安装 openGauss 数据库}
 
-因为\href{https://opengauss.org/zh/download/}{官网提供的下载中}没有 riscv 架构的，所以需要手动构建并安装 opengauss 数据库
+由于\href{https://opengauss.org/zh/download/}{官网提供的下载中}没有 RISC-V 架构支持，需要手动构建并安装 openGauss 数据库。
 
-此文档针对 riscv 平台编写，在其他平台下使用请自行配置 qemu
+（注：此文档针对 RISC-V 平台编写；其他平台下使用请自行配置 QEMU。）
 
-\paragraph{编译}
+使用 openEuler 容器编译可参考 \href{https://github.com/QA-Team-lo/dbtest/blob/main/opengauss/install.md}{此链接}。
 
-使用 openEuler 容器编译可参考 \href{https://github.com/QA-Team-lo/dbtest/blob/main/opengauss/install.md}{此链接}
+以下使用 Pioneer Box 裸机编译过程:
 
-以下使用 Pioneer Box 裸机编译:
-
-下载源码
+\paragraph{下载源码}
 
 \begin{verbatim}
 su 
@@ -198,7 +208,7 @@ git clone https://gitee.com/opengauss/riscv SOURCES
 cd SOURCES
 \end{verbatim}
 
-配置编译环境
+\paragraph{配置编译环境}
 
 \begin{verbatim}
 # 安装必要工具
@@ -209,14 +219,15 @@ yum-builddep -y opengauss-server.spec
 spectool -g opengauss-server.spec
 \end{verbatim}
 
-编译 rpm 包
+\paragraph{编译 rpm 包}
 
 \begin{verbatim}
 rpmbuild -ba opengauss-server.spec
 \end{verbatim}
 
 \paragraph{安装}
-等待一段时间，编译完成后，安装
+
+等待一段时间编译完成后，进行安装：
 
 \begin{verbatim}
 cd ../RPMS/riscv64/
@@ -232,6 +243,7 @@ systemctl enable --now opengauss-server
 \subsection{功能测试}
 
 在 PostgreSQL 中创建数据库和用户：
+
 \begin{verbatim}
 # 切换至 opengauss 用户
 su opengauss
@@ -240,7 +252,8 @@ su opengauss
 gsql -d postgres
 \end{verbatim}
 
-当 gsql 连接数据库成功后，在 gsql 交互界面中输入
+当 gsql 连接数据库成功后，在 gsql 交互界面中输入：
+
 \begin{verbatim}
 -- 修改默认用户密码
 alter role "opengauss" password "openGauss@2024";
@@ -253,7 +266,8 @@ CREATE DATABASE testdb owner testuser;
 \end{verbatim}
 
 
-修改 opengauss 配置文件
+修改 openGauss 配置文件：
+
 \begin{verbatim}
 vim /var/lib/opengauss/data/postgresql.conf
 # 配置 listen_addresses = '*'
@@ -269,12 +283,14 @@ gs_ctl -D $HOME/data reload
 
 \subsubsection{性能测试}
 
-安装 sysbench
+安装 sysbench：
+
 \begin{verbatim}
 sudo dnf install sysbench
 \end{verbatim}
 
-修改 opengauss 配置文件
+修改 openGauss 配置文件：
+
 \begin{verbatim}
 vim /var/lib/opengauss/data/postgresql.conf
 # 配置 listen_addresses = '*'
@@ -284,7 +300,7 @@ gs_ctl -D $HOME/data reload
 # reload 后即可生效
 \end{verbatim}
 
-在 openGauss 中创建数据库和用户(在修改密码规则后必须新建用户或修改密码才能使用)
+在 openGauss 中创建数据库和用户(修改密码规则后必须新建用户或修改密码才能使用)：
 \begin{verbatim}
 su - opengauss
 
@@ -295,7 +311,7 @@ CREATE USER testuser WITH PASSWORD 'openEuler12#$';
 CREATE DATABASE testdb owner testuser;
 \end{verbatim}
 
-授予权限用于测试
+授予权限用于测试：
 
 \begin{verbatim}
 [opengauss@openeuler-riscv64 openeuler]$ gsql -d postgres
@@ -315,7 +331,9 @@ ALTER ROLE
 \subsection{手动测试}
 
 \subsubsection{本地测试}
-使用 `gsql -U testuser -d testdb` 连接数据库，创建表，并作简单的增删查操作
+
+使用 \verb|gsql -U testuser -d testdb| 连接数据库，创建表，并作简单的增删查操作：
+
 \begin{verbatim}
 create table phonebook (
     id serial primary key,
@@ -339,33 +357,33 @@ select * from phonebook;
 
 \subsubsection{远程测试}
 
-下载 \href{https://opengauss.org/zh/download/}{JDBC\_6.0.0} 数据库驱动并解压
+下载 \href{https://opengauss.org/zh/download/}{JDBC\_6.0.0} 数据库驱动并解压。
 
-启动 Dbeaver,并选择菜单->数据库->驱动管理器，在弹出对话框中，选择新建
+启动 dbeaver, 选择"菜单->数据库->驱动管理器"，在弹出对话框中，选择"新建"：
 
 \begin{center}
 \includegraphics[width=9cm]{./image/1.png}
 \end{center}
 
-填写新建驱动名称->选择 JDBC 驱动文件,添加解压出来的`opengauss-jdbc-6.0.0.jar`->选择 JDBC Driver 类
+填写新建驱动名称->选择 JDBC 驱动文件, 添加解压出来的\verb|opengauss-jdbc-6.0.0.jar|->选择 JDBC Driver 类：
 
 \begin{center}
 \includegraphics[width=9cm]{./image/3.png}
 \end{center}
 
-填写 URL 模板，值为:`jdbc:opengauss://{host}:{port}/{database}`,勾选嵌入，其他复选框不选择，然后确认，添加驱动即完成
+填写 URL 模板，值为:\verb|jdbc:opengauss://{host}:{port}/{database}|,勾选嵌入，其他复选框不选择，并点击确认，即完成驱动添加操作：
 
 \begin{center}
 \includegraphics[width=9cm]{./image/2.png}
 \end{center}
 
-选择菜单->数据库->新建连接，在弹出的框中搜索上一步中新建的 JDBC 驱动名,选择后点击下一步,如下图示
+选择菜单->数据库->新建连接，在弹出的框中搜索上一步中新建的 JDBC 驱动名,选择后点击下一步：
 
 \begin{center}
 \includegraphics[width=9cm]{./image/4.png}
 \end{center}
 
-在弹出框中填写 openGauss 主机地址、端口、将要连接的数据库以及认证用户名和密码，点击测试链接验证是否可正确连接
+在弹出框中填写 openGauss 主机地址、端口、将要连接的数据库以及认证用户名和密码，点击测试链接验证是否可正确连接：
 
 \begin{center}
 \includegraphics[width=9cm]{./image/5.png}
@@ -374,12 +392,14 @@ select * from phonebook;
 
 \subsection{性能测试}
 
-初始化数据库
+初始化数据库：
+
 \begin{verbatim}
 sysbench --db-driver=pgsql --oltp-table-size=100000 --oltp-tables-count=24 --threads=1 --pgsql-host=127.0.0.1 --pgsql-port=5432 --pgsql-user=testuser --pgsql-password=openEuler12#$ --pgsql-db=testdb  /usr/share/sysbench/tests/include/oltp_legacy/parallel_prepare.lua run
 \end{verbatim}
 
-使用下列命令验证生成的数据
+使用下列命令验证生成的数据：
+
 \begin{verbatim}
 [opengauss@openeuler-riscv64 openeuler]$ gsql -U testuser -d testdb
 Password for user testuser: 
@@ -433,18 +453,21 @@ testdb=> \q
 \end{verbatim}
 
 
-执行读/写测试
+执行读/写测试：
+
 \begin{verbatim}
 sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-tables-count=24 --threads=64 --time=60 --pgsql-host=127.0.0.1 --pgsql-port=5432 --pgsql-user=testuser --pgsql-password=openEuler12#$ --pgsql-db=testdb /usr/share/sysbench/tests/include/oltp_legacy/oltp.lua run
 \end{verbatim}
-上述命令将从名为 /usr/share/sysbench/tests/include/oltp\_legacy/oltp.lua 的 LUA 脚本生成 OLTP 工作负载，针对主服务器上 24 个表的 100,000 行（具有 64 个工作线程）持续 60 秒）。每 2 秒，sysbench 将报告中间统计信息（\verb!--report-interval=2!）。
+上述命令将从名为 /usr/share/sysbench/tests/include/oltp\_legacy/oltp.lua 的 Lua 脚本生成 OLTP 工作负载，针对主服务器上 24 个表的 100,000 行（具有 64 个工作线程）持续 60 秒）。sysbench 每 2 秒将报告中间统计信息（\verb!--report-interval=2!）。
 
-执行只读测试
+执行只读测试：
+
 \begin{verbatim}
 sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-tables-count=24 --threads=64 --time=60 --pgsql-host=127.0.0.1 --pgsql-port=5432 --pgsql-user=testuser --pgsql-password=openEuler12#$ --pgsql-db=testdb /usr/share/sysbench/tests/include/oltp_legacy/select.lua run
 \end{verbatim}
 
-清理测试数据
+清理测试数据：
+
 \begin{verbatim}
 sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-tables-count=24 --threads=64 --time=60 --pgsql-host=127.0.0.1 --pgsql-port=5432 --pgsql-user=testuser --pgsql-password=openEuler12#$ --pgsql-db=testdb /usr/share/sysbench/tests/include/oltp_legacy/select.lua cleanup
 \end{verbatim}
@@ -453,7 +476,7 @@ sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-t
 \section{测试结果}
 
 \subsection{功能测试}
-licheepi 4a 由于性能较弱,在启动 openGauss 服务时超时,而 Pioneer Box 可以正常进行本地和远程连接
+LicheePi 4a 由于性能较弱, 启动 openGauss 服务时超时。Pioneer Box 可以正常进行本地和远程连接。
 
 使用 dbeaver 远程连接 openGauss 数据库结果如图所示:
 
@@ -465,25 +488,39 @@ licheepi 4a 由于性能较弱,在启动 openGauss 服务时超时,而 Pioneer B
 
 详细结果参见 \href{https://github.com/QA-Team-lo/dbtest/tree/main/opengauss/logs}{logs} 目录或附录。
 
-性能对比
+性能对比如下
 
 \textbf{SQL statistics}
 
 \begin{itemize}
     \item rw: oltp 测试,包含读写 
-    \item r:select 测试,仅读
+    \item r: select 测试,仅读
 \end{itemize}
 
 \begin{table}[h]
 \centering
-\begin{tabular}{|l|r|r|r|r|r|r|r|r|r|r|}
+\begin{tabular}{|l|r|r|r|r|r|r|}
 \hline
-Platform & read & write & other & total & transactions & transactions/s & queries & queries/s & ignored errors & reconnects \\
+Platform & read & write & other & total & transactions & transactions/s \\
 \hline
-SG2042 @ 10 Threads rw & 278796 & 79654 & 39828 & 398278 & 11913 & 331.56 & 398278 & 6631.51 & 1 & 0 \\
-SG2042 @ 64 Threads rw & 952280 & 272041 & 136057 & 1360378 & 68009 & 1128.35 & 1360378 & 22750.22 & 11 & 0 \\
-SG2042 @ 64 Threads r  & 1851630 & 0      & 0      & 1851630 & 1851630 & 30766.50 & 1851630 & 30766.50 & 0 & 0 \\
-X86\_64 @ 10 Threads rw & 584472 & 166989 & 83497 & 834958 & 41747 & 695.69 & 834958 & 13914.18 & 1 & 0 \\
+SG2042 @ 10 Threads rw & 278796 & 79654 & 39828 & 398278 & 11913 & 331.56 \\
+SG2042 @ 64 Threads rw & 952280 & 272041 & 136057 & 1360378 & 68009 & 1128.35 \\
+SG2042 @ 64 Threads r  & 1851630 & 0      & 0      & 1851630 & 1851630 & 30766.50 \\
+X86\_64 @ 10 Threads rw & 584472 & 166989 & 83497 & 834958 & 41747 & 695.69 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|r|r|r|r|}
+\hline
+Platform & queries & queries/s & ignored errors & reconnects \\
+\hline
+SG2042 @ 10 Threads rw & 398278 & 6631.51 & 1 & 0 \\
+SG2042 @ 64 Threads rw & 1360378 & 22750.22 & 11 & 0 \\
+SG2042 @ 64 Threads r  & 1851630 & 30766.50 & 0 & 0 \\
+X86\_64 @ 10 Threads rw & 834958 & 13914.18 & 1 & 0 \\
 \hline
 \end{tabular}
 \end{table}
@@ -504,6 +541,8 @@ X86\_64 @ 10 Threads rw & 5.23 & 14.37 & 1569.33 & 21.50 & 599913.47 \\
 \end{tabular}
 \end{table}
 
+
+
 \textbf{Threads fairness}
 
 \begin{table}[h]
@@ -522,15 +561,12 @@ X86\_64 @ 10 Threads rw & 4174.7000 & 12.74 & 59.9913 & 0.00 \\
 
 \subsection{已知问题}
 
-时间所限，笔者暂时没有找到合适的测试机，文中所使用的 Openeuler X86\_64 机器运行在 Hdd 上，I/O 性能会有严重瓶颈。这可能会影响 Opengauss 的性能表现。
-
-x86\_64 机器运行在 PVE 虚拟化环境下。通常来说，KVM 虚拟化会有性能损失，但不会很大。这也可能会影响性能表现。
-
-此外，内存大小不同也可能影响性能。
+时间所限，本报告撰写时未找到合适的x86\_64机器用于对照。文中使用的 openEuler x86\_64 机器运行在 HDD 上，I/O 性能有严重瓶颈；其运行在 PVE 虚拟化环境下，而KVM 虚拟化有少许性能损失；内存容量也小于上文涉及的两台 RISC-V 设备。这些因素都可能影响 openGauss 的性能表现。
 
 \section{总结}
 
-本次测试确认了 openGauss 在 RISC-V 平台上的初步可用性。在 Milk-V Pioneer Box 上，openGauss 能够稳定运行并提供良好的用户体验，而在性能更低的 Sipeed LicheePi 4A 上，由于硬件的限制，无法顺利启动服务。性能测试结果显示，在多线程操作下，Milk-V Pioneer Box 的性能与 x86\_64 平台相比仍有差距。具体来说，在读写混合负载下，x86_64 平台的事务和查询处理能力明显高于 Pioneer Box。
+本次测试确认了 openGauss 在 RISC-V 平台上的初步可用性。测试结果表明 openGauss 能够稳定运行在Milk-V Pioneer Box 上，并提供良好的用户体验，而性能稍弱的 Sipeed LicheePi 4A 上则由于硬件限制无法顺利启动服务。性能测试结果显示，在多线程操作下，Milk-V Pioneer Box 的性能与 x86\_64 平台相比仍有明显差距。在读写混合负载下，上文所述 x86\_64 对照机的事务和查询处理能力明显高于 Pioneer Box。
+综上所述，本次测试为 openGauss 在 RISC-V 平台的进一步优化和支持提供了参考。未来的优化方向包括提升其在低性能硬件平台上的表现，以及增加对更多操作系统和环境的支持，以提升其广泛性和竞争力。
 
 \newpage
 \appendix
@@ -556,9 +592,7 @@ Threads started!
 [ 6s ] thds: 10 tps: 324.53 qps: 6499.64 (r/w/o: 4552.45/1297.13/650.06) lat (ms,95%): 35.59 err/s: 0.50 reconn/s: 0.00
 [ 8s ] thds: 10 tps: 332.51 qps: 6644.63 (r/w/o: 4649.59/1331.03/664.01) lat (ms,95%): 33.12 err/s: 0.00 reconn/s: 0.00
 [ 10s ] thds: 10 tps: 332.99 qps: 6654.26 (r/w/o: 4656.33/1330.95/666.98) lat (ms,95%): 33.72 err/s: 0.00 reconn/s: 0.00
-[ 12s ] thds: 10 tps: 324.51 qps: 6499.60 (r/w/o: 4552.57/1298.02/649.01) lat (ms,95%): 34.33 err/s: 0.00 reconn/s: 0.00
-[ 14s ] thds: 10 tps: 333.51 qps: 6668.63 (r/w/o: 4667.09/1334.53/667.01) lat (ms,95%): 33.72 err/s: 0.00 reconn/s: 0.00
-[ 16s ] thds: 10 tps: 324.82 qps: 6477.44 (r/w/o: 4530.01/1297.79/649.64) lat (ms,95%): 34.33 err/s: 0.00 reconn/s: 0.00
+[ 12s ] thds: 10 tps: 324.51 qps: 6499.60 (r/w/o: 4552.57/1298.02/649.01)``9.64) lat (ms,95%): 34.33 err/s: 0.00 reconn/s: 0.00
 [ 18s ] thds: 10 tps: 328.18 qps: 6561.13 (r/w/o: 4593.54/1311.73/655.86) lat (ms,95%): 36.89 err/s: 0.00 reconn/s: 0.00
 [ 20s ] thds: 10 tps: 335.49 qps: 6735.39 (r/w/o: 4718.92/1344.98/671.49) lat (ms,95%): 31.94 err/s: 0.00 reconn/s: 0.00
 [ 22s ] thds: 10 tps: 331.51 qps: 6628.14 (r/w/o: 4641.60/1323.53/663.01) lat (ms,95%): 34.33 err/s: 0.00 reconn/s: 0.00
