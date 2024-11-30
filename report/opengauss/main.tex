@@ -46,7 +46,7 @@ sysbench 在 Pioneer Box 上的性能测试结果如下：
     \item r:select 测试,仅读
 \end{itemize}
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \begin{tabular}{|l|r|r|r|r|r|r|}
 \hline
@@ -60,7 +60,7 @@ X86\_64 @ 10 Threads rw & 584472 & 166989 & 83497 & 834958 & 41747 & 695.69 \\
 \end{tabular}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \begin{tabular}{|l|r|r|r|r|}
 \hline
@@ -76,7 +76,7 @@ X86\_64 @ 10 Threads rw & 834958 & 13914.18 & 1 & 0 \\
 
 \textbf{Latency}
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \begin{tabular}{|l|r|r|r|r|r|}
 \hline
@@ -92,7 +92,7 @@ X86\_64 @ 10 Threads rw & 5.23 & 14.37 & 1569.33 & 21.50 & 599913.47 \\
 
 \textbf{Threads fairness}
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \begin{tabular}{|l|r|r|r|r|}
 \hline
@@ -494,6 +494,7 @@ testdb=> \q
 \begin{minted}{bash}
 sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-tables-count=24 --threads=64 --time=60 --pgsql-host=127.0.0.1 --pgsql-port=5432 --pgsql-user=testuser --pgsql-password=openEuler12#$ --pgsql-db=testdb /usr/share/sysbench/tests/include/oltp_legacy/oltp.lua run
 \end{minted}
+
 上述命令将从名为 /usr/share/sysbench/tests/include/oltp\_legacy/oltp.lua 的 Lua 脚本生成 OLTP 工作负载，针对主服务器上 24 个表的 100,000 行（具有 64 个工作线程）持续 60 秒）。sysbench 每 2 秒将报告中间统计信息（\verb!--report-interval=2!）。
 
 执行只读测试：
@@ -517,7 +518,7 @@ LicheePi 4a 由于性能较弱, 启动 openGauss 服务时超时。Pioneer Box �
 使用 dbeaver 远程连接 openGauss 数据库结果如图所示:
 
 \begin{center}
-\includegraphics[width=9cm]{./image/6.png}
+\includegraphics[width=12cm]{./image/6.png}
 \end{center}
 
 \subsection{性能测试}
@@ -533,7 +534,7 @@ LicheePi 4a 由于性能较弱, 启动 openGauss 服务时超时。Pioneer Box �
     \item r: select 测试,仅读
 \end{itemize}
 
-\begin{table}[h]
+\begin{table}[h!]
 \centering
 \begin{tabular}{|l|r|r|r|r|r|r|}
 \hline
@@ -547,7 +548,7 @@ X86\_64 @ 10 Threads rw & 584472 & 166989 & 83497 & 834958 & 41747 & 695.69 \\
 \end{tabular}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[h!]
 \centering
 \begin{tabular}{|l|r|r|r|r|}
 \hline
@@ -561,9 +562,10 @@ X86\_64 @ 10 Threads rw & 834958 & 13914.18 & 1 & 0 \\
 \end{tabular}
 \end{table}
 
+
 \textbf{Latency}
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \begin{tabular}{|l|r|r|r|r|r|}
 \hline
@@ -577,11 +579,9 @@ X86\_64 @ 10 Threads rw & 5.23 & 14.37 & 1569.33 & 21.50 & 599913.47 \\
 \end{tabular}
 \end{table}
 
-
-
 \textbf{Threads fairness}
 
-\begin{table}[h]
+\begin{table}[h!]
 \centering
 \begin{tabular}{|l|r|r|r|r|}
 \hline
@@ -608,6 +608,8 @@ X86\_64 @ 10 Threads rw & 4174.7000 & 12.74 & 59.9913 & 0.00 \\
 \appendix
 
 \section{附录}
+
+\subsection{sysbench 原始测试数据}
 
 \paragraph{SG2042 openEuler 2403 10 线程 读写}
 
