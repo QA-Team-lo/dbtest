@@ -1,7 +1,7 @@
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
-*.log
+# *.log
 *.lot
 *.fls
 *.out
@@ -312,3 +312,4 @@ TSWLatexianTemp*
 # temp tex file when markdown package is used
 *.md.tex
 *.markdown.in
+/report/opengauss/main.log
