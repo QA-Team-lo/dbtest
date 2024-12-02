@@ -10,7 +10,7 @@
 
 %%------------------摘要-------------%%
 \begin{abstract}
-本次测试旨在验证 openGauss 数据库在 RISC-V 平台上的可用性，并选取了 Milk-V Pioneer Box 和 Sipeed LicheePi 4A 两个典型平台进行测试。结果表明，Milk-V Pioneer Box 能够稳定运行 openGauss，并支持本地及远程连接，表现出较好的用户体验。而 Sipeed LicheePi 4A 由于硬件性能的限制，无法正常启动 openGauss 服务。测试采用 openEuler 24.03 LTS 系统，并手动编译 openGauss 6.0.0 版本。功能测试涵盖了基本的数据库操作，确认了 openGauss 的基本功能正常可用。性能测试则通过 sysbench 工具对数据库在多线程读写和只读场景下的性能进行了评估。虽然 Milk-V Pioneer Box 在只读负载下表现相对较好，但整体性能仍不及 x86\_64 平台。本次测试证明了 openGauss 在 RISC-V 平台的初步可用性，为其在 RISC-V 上的进一步优化和支持提供了参考。
+本次测试旨在验证 openGauss 数据库在 RISC-V 平台上的可用性，并选取了 Milk-V Pioneer Box 和 Sipeed LicheePi 4A 两个典型平台进行测试。结果表明，Milk-V Pioneer Box 和 LicheePi 4A 能够稳定运行 openGauss，并支持本地及远程连接和使用，表现出较好的用户体验。测试采用 openEuler 24.03 LTS 系统，并手动编译 openGauss 6.0.0 版本。功能测试涵盖了基本的数据库操作，确认了 openGauss 的基本功能正常可用。性能测试则通过 sysbench 工具对数据库在多线程读写和只读场景下的性能进行了评估。Milk-V Pioneer Box 和 LicheePi 4A 整体性能仍不及 x86\_64 平台。本次测试证明了 openGauss 在 RISC-V 平台的初步可用性，为其在 RISC-V 上的进一步优化和支持提供了参考。
 \end{abstract}
 
 \thispagestyle{empty} % 首页不显示页码
@@ -28,23 +28,24 @@
 openGauss 是一个免费的开源关系型数据库管理系统，主要由华为开发和维护。它是一个广泛使用的代码库，为企业级应用提供了高性能、高可用性和高安全性的数据库解决方案。
 
 \subsection{测试目的}
-本次测试旨在验证 openGauss 在 RISC-V 平台上的可用性，特别是在 Milk-V Pioneer Box 和 Sipeed LicheePi 4A 两个典型平台上的表现。本报告通过手动测试的方法，从目前的平台兼容性及用户的日常使用体验两个角度评估了 openGauss 当前在 RISC-V 平台上的可用性，并给出了定性和定量的结论，为其未来进一步的优化和支持提供参考。
+本次测试旨在验证 openGauss 在 RISC-V 平台上的可用性，特别是在 Milk-V Pioneer Box 和 Sipeed LicheePi 4A 两个典型平台上的表现。本报告通过手动测试和性能测试的方法，从目前的平台兼容性及性能两个角度评估了 openGauss 当前在 RISC-V 平台上的可用性，并给出了定性和定量的结论，为其未来进一步的优化和支持提供参考。
 
 \subsection{测试概述}
-本次测试评估了 openGauss 数据库在 RISC-V 平台上的可靠性和性能表现，尤其是在 Milk-V Pioneer Box 和 Sipeed LicheePi 4A 两个典型 RISC-V 平台上。其中 Milk-V Pioneer Box 具备较强的处理能力，可以成功安装和运行 openGauss 数据库，并支持本地和远程连接。
+本次测试评估了 openGauss 数据库在 RISC-V 平台上的可靠性和性能表现，尤其是在 Milk-V Pioneer Box 和 Sipeed LicheePi 4A 两个典型 RISC-V 平台上。二者都可以成功安装和运行 openGauss 数据库，并支持本地和远程连接。
 测试使用了 openEuler 24.03 LTS 系统并手动编译 openGauss 6.0.0 版本。功能测试部分首先通过 gsql 和 dbeaver 工具验证了基本的数据库操作，包括用户和数据库的创建、基本的表操作等。性能测试则主要使用 sysbench 工具进行读写和只读性能测试，并在 x86\_64 平台上进行同样的测试作为对照。
 
 \subsection{测试总结}
-目前 openGauss 在 RISC-V 上仅支持使用 openEuler 系统进行编译与安装。测试结果显示 Pioneer Box 可以正常本地和远程连接与使用，而 LicheePi 4A 则因性能不足而无法启动 openGauss 服务。
+目前 openGauss 在 RISC-V 上仅支持使用 openEuler 系统进行编译与安装。测试结果显示 Pioneer Box 和 LicheePi 4A 可以正常本地和远程连接与使用.核心数量更多的 Pioneer Box 较 LicheePi 4A 在性能测试的结果更好,但不及同等测试环境的X86\_64 平台.
 
 sysbench 在 Pioneer Box 上的性能测试结果如下：
-
-\textbf{SQL statistics}
 
 \begin{itemize}
     \item rw: oltp 测试,包含读写 
     \item r:select 测试,仅读
+    \item Threads: 工作进程总数
 \end{itemize}
+
+\textbf{SQL statistics}
 
 \begin{table}[H]
 \centering
@@ -54,7 +55,9 @@ Platform & read & write & other & total & transactions & transactions/s \\
 \hline
 SG2042 @ 10 Threads rw & 278796 & 79654 & 39828 & 398278 & 11913 & 331.56 \\
 SG2042 @ 64 Threads rw & 952280 & 272041 & 136057 & 1360378 & 68009 & 1128.35 \\
-SG2042 @ 64 Threads r  & 1851630 & N/A       & N/A       & 1851630 & 1851630 & 30766.50 \\
+SG2042 @ 64 Threads ro & 1851630 & / & / & 1851630 & 1851630 & 30766.50 \\
+TH1520 @ 10 Threads rw & 36148 & 10328 & 5164 & 51640 & 2582 & 42.88 \\
+TH1520 @ 10 Threads ro & 70827 & / & / & 70827 & 70827 & 1179.09 \\
 X86\_64 @ 10 Threads rw & 584472 & 166989 & 83497 & 834958 & 41747 & 695.69 \\
 \hline
 \end{tabular}
@@ -68,7 +71,9 @@ Platform & queries & queries/s & ignored errors & reconnects \\
 \hline
 SG2042 @ 10 Threads rw & 398278 & 6631.51 & 1 & 0 \\
 SG2042 @ 64 Threads rw & 1360378 & 22750.22 & 11 & 0 \\
-SG2042 @ 64 Threads r  & 1851630 & 30766.50 & 0 & 0 \\
+SG2042 @ 64 Threads ro & 1851630 & 30766.50 & 0 & 0 \\
+TH1520 @ 10 Threads rw & 51640 & 857.56 & 0 & 0 \\
+TH1520 @ 10 Threads ro & 70827 & 1179.09 & 0 & 0 \\
 X86\_64 @ 10 Threads rw & 834958 & 13914.18 & 1 & 0 \\
 \hline
 \end{tabular}
@@ -84,7 +89,9 @@ Platform & min & avg & max & 95th percentile & sum \\
 \hline
 SG2042 @ 10 Threads rw & 25.62 & 30.13 & 99.91 & 33.72 & 599938.70 \\
 SG2042 @ 64 Threads rw & 38.63 & 56.49 & 421.75 & 70.55 & 3842023.49 \\
-SG2042 @ 64 Threads rw & 1.12 & 2.06 & 353.15 & 3.30 & 3822093.08 \\
+SG2042 @ 64 Threads ro & 1.12 & 2.06 & 353.15 & 3.30 & 3822093.08 \\
+TH1520 @ 10 Threads rw & 76.37 & 232.89 & 605.35 & 383.33 & 601332.83 \\
+TH1520 @ 10 Threads ro & 2.42 & 8.46 & 275.43 & 19.29 & 598998.43 \\
 X86\_64 @ 10 Threads rw & 5.23 & 14.37 & 1569.33 & 21.50 & 599913.47 \\
 \hline
 \end{tabular}
@@ -100,7 +107,9 @@ Platform & events avg & events stddev & execution time avg & execution time stdd
 \hline
 SG2042 @ 10 Threads rw & 1991.3000 & 32.68 & 59.9939 & 0.01 \\
 SG2042 @ 64 Threads rw & 1062.6406 & 24.58 & 60.0316 & 0.03 \\
-SG2042 @ 64 Threads r & 28931.7188 & 1217.10 & 59.7202 & 0.03 \\
+SG2042 @ 64 Threads ro & 28931.7188 & 1217.10 & 59.7202 & 0.03 \\
+TH1520 @ 10 Threads rw & 258.2000 & 7.74 & 60.1333 & 0.05 \\
+TH1520 @ 10 Threads ro & 7082.7000 & 280.72 & 59.8998 & 0.01 \\
 X86\_64 @ 10 Threads rw & 4174.7000 & 12.74 & 59.9913 & 0.00 \\
 \hline
 \end{tabular}
@@ -249,9 +258,21 @@ dnf install -y opengauss-server-6.0.0-1.riscv64.rpm
 
 \paragraph{初始化 \& 启动}
 
+openGauss 第一次启动初始化较慢, LicheePi 4A 需要修改 opengauss-server.service 延长启动超时时间来保证正常启动
+
+\begin{minted}{bash}
+
+sudo systemctl edit opengauss-server.service
+
+# TimeoutStartSec 参数定义了服务启动的超时时间，以秒为单位
+[Service]
+TimeoutStartSec=300
+  
+\end{minted}
+
 \begin{minted}{bash}
   
-  systemctl enable --now opengauss-server
+systemctl enable --now opengauss-server
   
 \end{minted}
 
@@ -513,8 +534,6 @@ sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-t
 \section{测试结果}
 
 \subsection{功能测试}
-LicheePi 4A 由于性能较弱, 启动 openGauss 服务时超时。Pioneer Box 可以正常进行本地和远程连接。
-
 使用 dbeaver 远程连接 openGauss 数据库结果如图所示:
 
 \begin{center}
@@ -525,16 +544,17 @@ LicheePi 4A 由于性能较弱, 启动 openGauss 服务时超时。Pioneer Box �
 
 详细结果参见 \href{https://github.com/QA-Team-lo/dbtest/tree/main/opengauss/logs}{logs} 目录或附录。
 
-性能对比如下
-
-\textbf{SQL statistics}
+Milk-V Pioneer Box, LicheePi 4A 和 X86\_64服务器性能对比如下
 
 \begin{itemize}
     \item rw: oltp 测试,包含读写 
-    \item r: select 测试,仅读
+    \item r:select 测试,仅读
+    \item Threads: 工作进程总数
 \end{itemize}
 
-\begin{table}[h!]
+\textbf{SQL statistics}
+
+\begin{table}[H]
 \centering
 \begin{tabular}{|l|r|r|r|r|r|r|}
 \hline
@@ -542,13 +562,15 @@ Platform & read & write & other & total & transactions & transactions/s \\
 \hline
 SG2042 @ 10 Threads rw & 278796 & 79654 & 39828 & 398278 & 11913 & 331.56 \\
 SG2042 @ 64 Threads rw & 952280 & 272041 & 136057 & 1360378 & 68009 & 1128.35 \\
-SG2042 @ 64 Threads r  & 1851630 & N/A       & N/A       & 1851630 & 1851630 & 30766.50 \\
+SG2042 @ 64 Threads ro & 1851630 & / & / & 1851630 & 1851630 & 30766.50 \\
+TH1520 @ 10 Threads rw & 36148 & 10328 & 5164 & 51640 & 2582 & 42.88 \\
+TH1520 @ 10 Threads ro & 70827 & / & / & 70827 & 70827 & 1179.09 \\
 X86\_64 @ 10 Threads rw & 584472 & 166989 & 83497 & 834958 & 41747 & 695.69 \\
 \hline
 \end{tabular}
 \end{table}
 
-\begin{table}[h!]
+\begin{table}[H]
 \centering
 \begin{tabular}{|l|r|r|r|r|}
 \hline
@@ -556,12 +578,13 @@ Platform & queries & queries/s & ignored errors & reconnects \\
 \hline
 SG2042 @ 10 Threads rw & 398278 & 6631.51 & 1 & 0 \\
 SG2042 @ 64 Threads rw & 1360378 & 22750.22 & 11 & 0 \\
-SG2042 @ 64 Threads r  & 1851630 & 30766.50 & 0 & 0 \\
+SG2042 @ 64 Threads ro & 1851630 & 30766.50 & 0 & 0 \\
+TH1520 @ 10 Threads rw & 51640 & 857.56 & 0 & 0 \\
+TH1520 @ 10 Threads ro & 70827 & 1179.09 & 0 & 0 \\
 X86\_64 @ 10 Threads rw & 834958 & 13914.18 & 1 & 0 \\
 \hline
 \end{tabular}
 \end{table}
-
 
 \textbf{Latency}
 
@@ -573,7 +596,9 @@ Platform & min & avg & max & 95th percentile & sum \\
 \hline
 SG2042 @ 10 Threads rw & 25.62 & 30.13 & 99.91 & 33.72 & 599938.70 \\
 SG2042 @ 64 Threads rw & 38.63 & 56.49 & 421.75 & 70.55 & 3842023.49 \\
-SG2042 @ 64 Threads rw & 1.12 & 2.06 & 353.15 & 3.30 & 3822093.08 \\
+SG2042 @ 64 Threads ro & 1.12 & 2.06 & 353.15 & 3.30 & 3822093.08 \\
+TH1520 @ 10 Threads rw & 76.37 & 232.89 & 605.35 & 383.33 & 601332.83 \\
+TH1520 @ 10 Threads ro & 2.42 & 8.46 & 275.43 & 19.29 & 598998.43 \\
 X86\_64 @ 10 Threads rw & 5.23 & 14.37 & 1569.33 & 21.50 & 599913.47 \\
 \hline
 \end{tabular}
@@ -581,7 +606,7 @@ X86\_64 @ 10 Threads rw & 5.23 & 14.37 & 1569.33 & 21.50 & 599913.47 \\
 
 \textbf{Threads fairness}
 
-\begin{table}[h!]
+\begin{table}[H]
 \centering
 \begin{tabular}{|l|r|r|r|r|}
 \hline
@@ -589,7 +614,9 @@ Platform & events avg & events stddev & execution time avg & execution time stdd
 \hline
 SG2042 @ 10 Threads rw & 1991.3000 & 32.68 & 59.9939 & 0.01 \\
 SG2042 @ 64 Threads rw & 1062.6406 & 24.58 & 60.0316 & 0.03 \\
-SG2042 @ 64 Threads r & 28931.7188 & 1217.10 & 59.7202 & 0.03 \\
+SG2042 @ 64 Threads ro & 28931.7188 & 1217.10 & 59.7202 & 0.03 \\
+TH1520 @ 10 Threads rw & 258.2000 & 7.74 & 60.1333 & 0.05 \\
+TH1520 @ 10 Threads ro & 7082.7000 & 280.72 & 59.8998 & 0.01 \\
 X86\_64 @ 10 Threads rw & 4174.7000 & 12.74 & 59.9913 & 0.00 \\
 \hline
 \end{tabular}
@@ -601,7 +628,7 @@ X86\_64 @ 10 Threads rw & 4174.7000 & 12.74 & 59.9913 & 0.00 \\
 
 \section{总结}
 
-本次测试确认了 openGauss 在 RISC-V 平台上的初步可用性。测试结果表明 openGauss 能够稳定运行在Milk-V Pioneer Box 上，并提供良好的用户体验，而性能稍弱的 Sipeed LicheePi 4A 上则由于硬件限制无法顺利启动服务。性能测试结果显示，在多线程操作下，Milk-V Pioneer Box 的性能与 x86\_64 平台相比仍有明显差距。在读写混合负载下，上文所述 x86\_64 对照机的事务和查询处理能力明显高于 Pioneer Box。
+本次测试确认了 openGauss 在 RISC-V 平台上的初步可用性。测试结果表明 openGauss 能够稳定运行在 Milk-V Pioneer Box 和 LicheePi 4A 上，并提供良好的用户体验。性能测试结果显示，在多线程操作下，Milk-V Pioneer Box 和 LicheePi 4A 的性能与 x86\_64 平台相比仍有明显差距。在读写混合负载下，上文所述 x86\_64 对照机的事务和查询处理能力明显高于 Pioneer Box。
 综上所述，本次测试为 openGauss 在 RISC-V 平台的进一步优化和支持提供了参考。未来的优化方向包括提升其在低性能硬件平台上的表现，以及增加对更多操作系统和环境的支持，以提升其广泛性和竞争力。
 
 \newpage
@@ -822,6 +849,151 @@ Latency (ms):
 Threads fairness:
     events (avg/stddev):           28931.7188/1217.10
     execution time (avg/stddev):   59.7202/0.03
+\end{minted}
+
+\paragraph{TH1520 openEuler 24.03 LTS 10 线程 读写}
+
+\begin{minted}{text}
+sysbench 1.0.20 (using system LuaJIT 2.1.ROLLING)
+
+Running the test with following options:
+Number of threads: 10
+Report intermediate results every 2 second(s)
+Initializing random number generator from current time
+
+
+Initializing worker threads...
+
+Threads started!
+
+[ 2s ] thds: 10 tps: 34.12 qps: 718.42 (r/w/o: 507.31/138.31/72.80) lat (ms,95%): 484.44 err/s: 0.00 reconn/s: 0.00
+[ 4s ] thds: 10 tps: 46.65 qps: 960.87 (r/w/o: 675.08/192.50/93.30) lat (ms,95%): 356.70 err/s: 0.00 reconn/s: 0.00
+[ 6s ] thds: 10 tps: 42.40 qps: 825.77 (r/w/o: 576.93/164.04/84.80) lat (ms,95%): 397.39 err/s: 0.00 reconn/s: 0.00
+[ 8s ] thds: 10 tps: 41.47 qps: 837.15 (r/w/o: 589.76/164.44/82.94) lat (ms,95%): 442.73 err/s: 0.00 reconn/s: 0.00
+[ 10s ] thds: 10 tps: 42.33 qps: 845.09 (r/w/o: 589.57/170.85/84.66) lat (ms,95%): 383.33 err/s: 0.00 reconn/s: 0.00
+[ 12s ] thds: 10 tps: 45.88 qps: 928.10 (r/w/o: 653.35/183.00/91.75) lat (ms,95%): 363.18 err/s: 0.00 reconn/s: 0.00
+[ 14s ] thds: 10 tps: 40.60 qps: 813.08 (r/w/o: 567.43/164.44/81.21) lat (ms,95%): 369.77 err/s: 0.00 reconn/s: 0.00
+[ 16s ] thds: 10 tps: 45.59 qps: 897.22 (r/w/o: 625.14/180.90/91.18) lat (ms,95%): 363.18 err/s: 0.00 reconn/s: 0.00
+[ 18s ] thds: 10 tps: 39.69 qps: 792.33 (r/w/o: 552.20/160.75/79.38) lat (ms,95%): 434.83 err/s: 0.00 reconn/s: 0.00
+[ 20s ] thds: 10 tps: 47.15 qps: 955.97 (r/w/o: 675.66/186.53/93.78) lat (ms,95%): 363.18 err/s: 0.00 reconn/s: 0.00
+[ 22s ] thds: 10 tps: 38.71 qps: 775.23 (r/w/o: 539.03/158.28/77.91) lat (ms,95%): 390.30 err/s: 0.00 reconn/s: 0.00
+[ 24s ] thds: 10 tps: 45.62 qps: 912.40 (r/w/o: 642.19/178.97/91.24) lat (ms,95%): 320.17 err/s: 0.00 reconn/s: 0.00
+[ 26s ] thds: 10 tps: 42.51 qps: 841.77 (r/w/o: 585.68/171.05/85.03) lat (ms,95%): 383.33 err/s: 0.00 reconn/s: 0.00
+[ 28s ] thds: 10 tps: 44.69 qps: 897.33 (r/w/o: 626.13/181.83/89.37) lat (ms,95%): 363.18 err/s: 0.00 reconn/s: 0.00
+[ 30s ] thds: 10 tps: 42.34 qps: 853.31 (r/w/o: 599.26/169.37/84.68) lat (ms,95%): 397.39 err/s: 0.00 reconn/s: 0.00
+[ 32s ] thds: 10 tps: 44.89 qps: 901.76 (r/w/o: 633.93/178.06/89.78) lat (ms,95%): 404.61 err/s: 0.00 reconn/s: 0.00
+[ 34s ] thds: 10 tps: 39.65 qps: 795.43 (r/w/o: 559.52/156.61/79.29) lat (ms,95%): 383.33 err/s: 0.00 reconn/s: 0.00
+[ 36s ] thds: 10 tps: 43.96 qps: 861.33 (r/w/o: 599.57/173.85/87.91) lat (ms,95%): 344.08 err/s: 0.00 reconn/s: 0.00
+[ 38s ] thds: 10 tps: 44.85 qps: 879.71 (r/w/o: 611.12/178.90/89.70) lat (ms,95%): 350.33 err/s: 0.00 reconn/s: 0.00
+[ 40s ] thds: 10 tps: 40.74 qps: 846.89 (r/w/o: 598.38/167.04/81.48) lat (ms,95%): 411.96 err/s: 0.00 reconn/s: 0.00
+[ 42s ] thds: 10 tps: 44.52 qps: 858.46 (r/w/o: 593.38/176.04/89.03) lat (ms,95%): 404.61 err/s: 0.00 reconn/s: 0.00
+[ 44s ] thds: 10 tps: 43.68 qps: 904.74 (r/w/o: 643.16/174.22/87.36) lat (ms,95%): 369.77 err/s: 0.00 reconn/s: 0.00
+[ 46s ] thds: 10 tps: 40.79 qps: 806.07 (r/w/o: 562.31/162.19/81.58) lat (ms,95%): 397.39 err/s: 0.00 reconn/s: 0.00
+[ 48s ] thds: 10 tps: 45.70 qps: 906.53 (r/w/o: 630.31/184.82/91.41) lat (ms,95%): 356.70 err/s: 0.00 reconn/s: 0.00
+[ 50s ] thds: 10 tps: 40.02 qps: 823.99 (r/w/o: 584.90/159.05/80.04) lat (ms,95%): 427.07 err/s: 0.00 reconn/s: 0.00
+[ 52s ] thds: 10 tps: 46.34 qps: 910.70 (r/w/o: 632.17/185.85/92.68) lat (ms,95%): 337.94 err/s: 0.00 reconn/s: 0.00
+[ 54s ] thds: 10 tps: 42.17 qps: 836.77 (r/w/o: 583.76/168.68/84.34) lat (ms,95%): 363.18 err/s: 0.00 reconn/s: 0.00
+[ 56s ] thds: 10 tps: 42.33 qps: 845.24 (r/w/o: 593.14/167.43/84.67) lat (ms,95%): 376.49 err/s: 0.00 reconn/s: 0.00
+[ 58s ] thds: 10 tps: 43.25 qps: 894.84 (r/w/o: 631.23/177.12/86.50) lat (ms,95%): 344.08 err/s: 0.00 reconn/s: 0.00
+[ 60s ] thds: 10 tps: 43.12 qps: 839.14 (r/w/o: 582.43/170.47/86.25) lat (ms,95%): 404.61 err/s: 0.00 reconn/s: 0.00
+SQL statistics:
+    queries performed:
+        read:                            36148
+        write:                           10328
+        other:                           5164
+        total:                           51640
+    transactions:                        2582   (42.88 per sec.)
+    queries:                             51640  (857.56 per sec.)
+    ignored errors:                      0      (0.00 per sec.)
+    reconnects:                          0      (0.00 per sec.)
+
+General statistics:
+    total time:                          60.1959s
+    total number of events:              2582
+
+Latency (ms):
+         min:                                   76.37
+         avg:                                  232.89
+         max:                                  605.35
+         95th percentile:                      383.33
+         sum:                               601332.83
+
+Threads fairness:
+    events (avg/stddev):           258.2000/7.74
+    execution time (avg/stddev):   60.1333/0.05
+    
+\end{minted}
+
+\paragraph{TH1520 openEuler 24.03 LTS 10 线程 仅读}
+
+\begin{minted}{text}
+sysbench 1.0.20 (using system LuaJIT 2.1.ROLLING)
+
+Running the test with following options:
+Number of threads: 10
+Report intermediate results every 2 second(s)
+Initializing random number generator from current time
+
+
+Initializing worker threads...
+
+Threads started!
+
+[ 2s ] thds: 10 tps: 961.68 qps: 961.68 (r/w/o: 961.68/0.00/0.00) lat (ms,95%): 21.11 err/s: 0.00 reconn/s: 0.00
+[ 4s ] thds: 10 tps: 1195.16 qps: 1195.16 (r/w/o: 1195.16/0.00/0.00) lat (ms,95%): 20.74 err/s: 0.00 reconn/s: 0.00
+[ 6s ] thds: 10 tps: 1172.19 qps: 1172.19 (r/w/o: 1172.19/0.00/0.00) lat (ms,95%): 21.89 err/s: 0.00 reconn/s: 0.00
+[ 8s ] thds: 10 tps: 1185.05 qps: 1185.05 (r/w/o: 1185.05/0.00/0.00) lat (ms,95%): 20.74 err/s: 0.00 reconn/s: 0.00
+[ 10s ] thds: 10 tps: 1192.47 qps: 1192.47 (r/w/o: 1192.47/0.00/0.00) lat (ms,95%): 20.74 err/s: 0.00 reconn/s: 0.00
+[ 12s ] thds: 10 tps: 1151.12 qps: 1151.12 (r/w/o: 1151.12/0.00/0.00) lat (ms,95%): 20.00 err/s: 0.00 reconn/s: 0.00
+[ 14s ] thds: 10 tps: 1185.68 qps: 1185.68 (r/w/o: 1185.68/0.00/0.00) lat (ms,95%): 18.95 err/s: 0.00 reconn/s: 0.00
+[ 16s ] thds: 10 tps: 1193.23 qps: 1193.23 (r/w/o: 1193.23/0.00/0.00) lat (ms,95%): 18.95 err/s: 0.00 reconn/s: 0.00
+[ 18s ] thds: 10 tps: 1192.96 qps: 1192.96 (r/w/o: 1192.96/0.00/0.00) lat (ms,95%): 20.00 err/s: 0.00 reconn/s: 0.00
+[ 20s ] thds: 10 tps: 1167.66 qps: 1167.66 (r/w/o: 1167.66/0.00/0.00) lat (ms,95%): 18.61 err/s: 0.00 reconn/s: 0.00
+[ 22s ] thds: 10 tps: 1171.92 qps: 1171.92 (r/w/o: 1171.92/0.00/0.00) lat (ms,95%): 20.00 err/s: 0.00 reconn/s: 0.00
+[ 24s ] thds: 10 tps: 1187.15 qps: 1187.15 (r/w/o: 1187.15/0.00/0.00) lat (ms,95%): 19.29 err/s: 0.00 reconn/s: 0.00
+[ 26s ] thds: 10 tps: 1201.61 qps: 1201.61 (r/w/o: 1201.61/0.00/0.00) lat (ms,95%): 17.95 err/s: 0.00 reconn/s: 0.00
+[ 28s ] thds: 10 tps: 1174.29 qps: 1174.29 (r/w/o: 1174.29/0.00/0.00) lat (ms,95%): 19.65 err/s: 0.00 reconn/s: 0.00
+[ 30s ] thds: 10 tps: 1204.82 qps: 1204.82 (r/w/o: 1204.82/0.00/0.00) lat (ms,95%): 17.95 err/s: 0.00 reconn/s: 0.00
+[ 32s ] thds: 10 tps: 1152.44 qps: 1152.44 (r/w/o: 1152.44/0.00/0.00) lat (ms,95%): 18.95 err/s: 0.00 reconn/s: 0.00
+[ 34s ] thds: 10 tps: 1209.53 qps: 1209.53 (r/w/o: 1209.53/0.00/0.00) lat (ms,95%): 18.95 err/s: 0.00 reconn/s: 0.00
+[ 36s ] thds: 10 tps: 1191.71 qps: 1191.71 (r/w/o: 1191.71/0.00/0.00) lat (ms,95%): 17.32 err/s: 0.00 reconn/s: 0.00
+[ 38s ] thds: 10 tps: 1126.92 qps: 1126.92 (r/w/o: 1126.92/0.00/0.00) lat (ms,95%): 21.89 err/s: 0.00 reconn/s: 0.00
+[ 40s ] thds: 10 tps: 1213.35 qps: 1213.35 (r/w/o: 1213.35/0.00/0.00) lat (ms,95%): 17.95 err/s: 0.00 reconn/s: 0.00
+[ 42s ] thds: 10 tps: 1186.54 qps: 1187.05 (r/w/o: 1187.05/0.00/0.00) lat (ms,95%): 20.00 err/s: 0.00 reconn/s: 0.00
+[ 44s ] thds: 10 tps: 1200.82 qps: 1200.32 (r/w/o: 1200.32/0.00/0.00) lat (ms,95%): 19.29 err/s: 0.00 reconn/s: 0.00
+[ 46s ] thds: 10 tps: 1193.64 qps: 1193.64 (r/w/o: 1193.64/0.00/0.00) lat (ms,95%): 17.63 err/s: 0.00 reconn/s: 0.00
+[ 48s ] thds: 10 tps: 1217.46 qps: 1217.46 (r/w/o: 1217.46/0.00/0.00) lat (ms,95%): 18.61 err/s: 0.00 reconn/s: 0.00
+[ 50s ] thds: 10 tps: 1165.50 qps: 1165.50 (r/w/o: 1165.50/0.00/0.00) lat (ms,95%): 19.29 err/s: 0.00 reconn/s: 0.00
+[ 52s ] thds: 10 tps: 1196.86 qps: 1196.86 (r/w/o: 1196.86/0.00/0.00) lat (ms,95%): 18.28 err/s: 0.00 reconn/s: 0.00
+[ 54s ] thds: 10 tps: 1186.07 qps: 1186.07 (r/w/o: 1186.07/0.00/0.00) lat (ms,95%): 17.95 err/s: 0.00 reconn/s: 0.00
+[ 56s ] thds: 10 tps: 1202.18 qps: 1202.18 (r/w/o: 1202.18/0.00/0.00) lat (ms,95%): 18.28 err/s: 0.00 reconn/s: 0.00
+[ 58s ] thds: 10 tps: 1198.01 qps: 1198.51 (r/w/o: 1198.51/0.00/0.00) lat (ms,95%): 18.95 err/s: 0.00 reconn/s: 0.00
+SQL statistics:
+    queries performed:
+        read:                            70827
+        write:                           0
+        other:                           0
+        total:                           70827
+    transactions:                        70827  (1179.09 per sec.)
+    queries:                             70827  (1179.09 per sec.)
+    ignored errors:                      0      (0.00 per sec.)
+    reconnects:                          0      (0.00 per sec.)
+
+General statistics:
+    total time:                          60.0509s
+    total number of events:              70827
+
+Latency (ms):
+         min:                                    2.42
+         avg:                                    8.46
+         max:                                  275.43
+         95th percentile:                       19.29
+         sum:                               598998.43
+
+Threads fairness:
+    events (avg/stddev):           7082.7000/280.72
+    execution time (avg/stddev):   59.8998/0.01
+
 \end{minted}
 
 \end{document}
