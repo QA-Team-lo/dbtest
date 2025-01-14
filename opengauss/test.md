@@ -475,3 +475,6 @@ Threads fairness:
 </details>
 
 
+## ref
+
+本测试报告包含了部分来自 openGauss RISC-V SIG 的内容：https://gitee.com/opengauss/riscv/blob/master/README.md - [MulanPSL-2.0](https://license.coscl.org.cn/MulanPSL2)
