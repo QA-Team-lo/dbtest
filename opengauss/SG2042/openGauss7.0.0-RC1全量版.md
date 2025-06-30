@@ -1,0 +1,180 @@
+# openGauss 数据库 (7.0.0-RC1 全量版) SG2042 性能测试报告
+
+## 测试环境
+
+- 硬件：SG2042 SoC (Milk-V Pioneer 开发板)
+- 操纵系统：openEuler 24.03 LTS-SP1
+
+## 数据库初始化
+
+`opengauss_install_c910` 为解压的openGauss二进制程序目录
+
+导出环境变量(`GAUSSHOME` 后面跟 `opengauss` 二进制包的绝对路径，根据实际情况调整，`PGDATA` 是数据库存放路径，也是根据实际情况调整)
+
+```bash
+export GAUSSHOME=/home/openeuler/opengauss_install_c910
+export LD_LIBRARY_PATH=$GAUSSHOME/lib:$LD_LIBRARY_PATH
+export PATH=$GAUSSHOME/bin:$PATH
+export PGDATA=/home/openeuler/gauss_data
+```
+
+初始化openGauss数据库
+
+```bash
+gs_initdb -D /home/openeuler/gauss_data -U openeuler --nodename=single_node
+```
+
+启动openGauss服务
+
+```bash
+gs_ctl start -D /home/openeuler/gauss_data -Z single_node
+```
+
+## 准备性能测试环境
+
+按照sysbench
+
+```bash
+[openeuler@openeuler-riscv64 ~]$ sudo dnf install sysbench
+```
+
+修改 opengauss 配置文件
+
+```bash
+[openeuler@openeuler-riscv64 ~]$ vim gauss_data/postgresql.conf
+# 配置 listen_addresses = '*'
+# 配置 password_encryption_type = 1
+
+gs_ctl -D $HOME/data reload
+# reload 后即可生效
+```
+
+在 openGauss 中创建数据库和用户(在修改密码规则后必须新建用户或修改密码才能使用), 并授予权限用于测试
+
+```bash
+[openeuler@openeuler-riscv64 ~]$ gsql -d postgres
+
+openGauss=# CREATE USER testuser WITH PASSWORD 'openEuler12#$';
+openGauss=# CREATE DATABASE testdb owner testuser;
+openGauss=# GRANT ALL ON SCHEMA public TO testuser;
+GRANT
+openGauss=# GRANT ALL PRIVILEGES TO testuser; 
+ALTER ROLE
+```
+
+## 运行测试
+
+初始化数据库
+
+```bash
+sysbench --db-driver=pgsql --oltp-table-size=100000 --oltp-tables-count=24 --threads=1 --pgsql-host=127.0.0.1 --pgsql-port=5432 --pgsql-user=testuser --pgsql-password=openEuler12#$ --pgsql-db=testdb  /usr/share/sysbench/tests/include/oltp_legacy/parallel_prepare.lua run
+```
+
+使用下列命令验证生成的数据
+
+```bash
+[openeuler@openeuler-riscv64 ~]$ gsql -U testuser -d testdb
+Password for user testuser:
+gsql ((openGauss 7.0.0-RC1 build db163840) compiled at 2025-04-06 01:56:58 commit 0 last mr  )
+Non-SSL connection (SSL connection is recommended when requiring high-security)
+Type "help" for help.
+
+testdb=> \dt
+                            List of relations
+ Schema |   Name   | Type  |  Owner   |             Storage
+--------+----------+-------+----------+----------------------------------
+ public | sbtest1  | table | testuser | {orientation=row,compression=no}
+ public | sbtest10 | table | testuser | {orientation=row,compression=no}
+ public | sbtest11 | table | testuser | {orientation=row,compression=no}
+ public | sbtest12 | table | testuser | {orientation=row,compression=no}
+ public | sbtest13 | table | testuser | {orientation=row,compression=no}
+ public | sbtest14 | table | testuser | {orientation=row,compression=no}
+ public | sbtest15 | table | testuser | {orientation=row,compression=no}
+ public | sbtest16 | table | testuser | {orientation=row,compression=no}
+ public | sbtest17 | table | testuser | {orientation=row,compression=no}
+ public | sbtest18 | table | testuser | {orientation=row,compression=no}
+ public | sbtest19 | table | testuser | {orientation=row,compression=no}
+ public | sbtest2  | table | testuser | {orientation=row,compression=no}
+ public | sbtest20 | table | testuser | {orientation=row,compression=no}
+ public | sbtest21 | table | testuser | {orientation=row,compression=no}
+ public | sbtest22 | table | testuser | {orientation=row,compression=no}
+ public | sbtest23 | table | testuser | {orientation=row,compression=no}
+ public | sbtest24 | table | testuser | {orientation=row,compression=no}
+ public | sbtest3  | table | testuser | {orientation=row,compression=no}
+ public | sbtest4  | table | testuser | {orientation=row,compression=no}
+ public | sbtest5  | table | testuser | {orientation=row,compression=no}
+ public | sbtest6  | table | testuser | {orientation=row,compression=no}
+ public | sbtest7  | table | testuser | {orientation=row,compression=no}
+ public | sbtest8  | table | testuser | {orientation=row,compression=no}
+ public | sbtest9  | table | testuser | {orientation=row,compression=no}
+(24 rows)
+
+testdb=> \d sbtest1
+                             Table "public.sbtest1"
+ Column |      Type      |                      Modifiers
+--------+----------------+------------------------------------------------------
+ id     | integer        | not null default nextval('sbtest1_id_seq'::regclass)
+ k      | integer        | not null default 0
+ c      | character(120) | not null default NULL::bpchar
+ pad    | character(60)  | not null default NULL::bpchar
+Indexes:
+    "sbtest1_pkey" PRIMARY KEY, btree (id) TABLESPACE pg_default
+    "k_1" btree (k) TABLESPACE pg_default
+
+testdb=> \q
+[openeuler@openeuler-riscv64 ~]$
+```
+
+执行读/写测试
+
+```bash
+sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-tables-count=24 --threads=10 --time=60 --pgsql-host=127.0.0.1 --pgsql-port=5432 --pgsql-user=testuser --pgsql-password=openEuler12#$ --pgsql-db=testdb /usr/share/sysbench/tests/include/oltp_legacy/oltp.lua run
+```
+
+上述命令将从名为 /usr/share/sysbench/tests/include/oltp_legacy/oltp.lua 的 LUA 脚本生成 OLTP 工作负载，针对主服务器上 24 个表的 100,000 行（具有 10 个工作线程）持续 60 秒）。每 2 秒，sysbench 将报告中间统计信息（–report-interval=2）。
+
+执行只读测试
+
+```bash
+sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-tables-count=24 --threads=10 --time=60 --pgsql-host=127.0.0.1 --pgsql-port=5432 --pgsql-user=testuser --pgsql-password=openEuler12#$ --pgsql-db=testdb /usr/share/sysbench/tests/include/oltp_legacy/select.lua run
+```
+
+清理测试数据
+
+```bash
+sysbench --db-driver=pgsql --report-interval=2 --oltp-table-size=100000 --oltp-tables-count=24 --threads=10 --time=60 --pgsql-host=127.0.0.1 --pgsql-port=5432 --pgsql-user=testuser --pgsql-password=openEuler12#$ --pgsql-db=testdb /usr/share/sysbench/tests/include/oltp_legacy/select.lua cleanup
+```
+
+
+## 性能测试结果
+详细结果参见 [logs](./logs) 目录或下文。
+
+## 性能测试总结
+
+> rw: oltp 测试,包含读写 ro:select 测试,仅读
+
+SQL statistics:
+
+| Platform               | read      | write   | other   | total     | transactions | transactions/s | queries   | queries/s | ignored errors | reconnects |
+| ---------------------- | --------- | ------- | ------- | --------- | ------------ | -------------- | --------- | --------- | -------------- | ---------- |
+| SG2042 @ 64 Threads rw | 745 136   | 212 859 | 106 463 | 1 064 458 | 53 213       | 882.54         | 1 064 458 | 17 654.14 | 11             | 0          |
+| SG2042 @ 10 Threads rw | 233 646   | 66 756  | 33 378  | 333 780   | 16 689       | 277.83         | 333 780   | 5 556.59  | 0              | 0          |
+| SG2042 @ 64 Threads ro | 1 231 598 | 0       | 0       | 1 231 598 | 1 231 598    | 20 444.07      | 1 231 598 | 20 444.07 | 0              | 0          |
+| SG2042 @ 10 Threads ro | 410 364   | 0       | 0       | 410 364   | 410 364      | 6 834.79       | 410 364   | 6 834.79  | 0              | 0          |
+
+
+Latency (ms):
+| Platform               | min   | avg   | max      | 95th percentile | sum          |
+| ---------------------- | ----- | ----- | -------- | --------------- | ------------ |
+| SG2042 @ 64 Threads rw | 37.89 | 72.20 | 2 480.83 | 94.10           | 3 842 114.12 |
+| SG2042 @ 10 Threads rw | 29.58 | 35.95 | 201.60   | 41.10           | 599 921.08   |
+| SG2042 @ 64 Threads ro | 1.40  | 3.11  | 295.67   | 5.99            | 3 826 608.32 |
+| SG2042 @ 10 Threads ro | 1.00  | 1.46  | 135.47   | 1.70            | 597 186.23   |
+
+Threads fairness:
+| Platform               | events avg  | events stddev | execution time avg | execution time stddev |
+| ---------------------- | ----------- | ------------- | ------------------ | --------------------- |
+| SG2042 @ 64 Threads rw | 831.4531    | 7.19          | 60.0330            | 0.04                  |
+| SG2042 @ 10 Threads rw | 1 668.9000  | 15.25         | 59.9921            | 0.02                  |
+| SG2042 @ 64 Threads ro | 19 243.7188 | 383.70        | 59.7908            | 0.01                  |
+| SG2042 @ 10 Threads ro | 41 036.4000 | 864.36        | 59.7186            | 0.01                  |
